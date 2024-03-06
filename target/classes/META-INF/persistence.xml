@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="adconexiones" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>com.itson.proyecto2_233410_233023.dominio.Cargo</class>
+    <class>com.itson.proyecto2_233410_233023.dominio.CatalogoProductos</class>
+    <class>com.itson.proyecto2_233410_233023.dominio.Cita</class>
+    <class>com.itson.proyecto2_233410_233023.dominio.Cliente</class>
+    <class>com.itson.proyecto2_233410_233023.dominio.ContratoServicio</class>
+    <class>com.itson.proyecto2_233410_233023.dominio.Gastos</class>
+    <class>com.itson.proyecto2_233410_233023.dominio.Inventario</class>
+    <class>com.itson.proyecto2_233410_233023.dominio.InventarioCliente</class>
+    <class>com.itson.proyecto2_233410_233023.dominio.InventarioEmpresa</class>
+    <class>com.itson.proyecto2_233410_233023.dominio.Pago</class>
+    <class>com.itson.proyecto2_233410_233023.dominio.Plan</class>
+    <class>com.itson.proyecto2_233410_233023.dominio.ProductoCliente</class>
+    <class>com.itson.proyecto2_233410_233023.dominio.ProductoEmpresa</class>
+    <class>com.itson.proyecto2_233410_233023.dominio.Trabajador</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/adconexiones?zeroDateTimeBehavior=CONVERT_TO_NULL"/>
+      <property name="javax.persistence.jdbc.user" value="root"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+      <property name="javax.persistence.jdbc.password" value="admin"/>
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
+    </properties>
+  </persistence-unit>
+</persistence>
