@@ -6,6 +6,7 @@ package interfaces;
 
 import com.itson.proyecto2_233410_233023.dominio.Cliente;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -27,5 +28,7 @@ public interface IClienteDAO {
     public List<Cliente> obtenerClientesAtrasados() throws SQLException;
 
     public List<Cliente> obtenerClientesSemana() throws SQLException;
+    
+    public List<Cliente> obtenerClientesPorPeriodo(LocalDate fechaInicio, LocalDate fechaFin) throws SQLException;
 
 }

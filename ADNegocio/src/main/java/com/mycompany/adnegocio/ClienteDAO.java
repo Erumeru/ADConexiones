@@ -53,9 +53,10 @@ public class ClienteDAO implements IClienteDAO {
             Cliente c8 = new Cliente("Ambar Baca", "Urbi", "Altamira", "602B", "6441739456");
             Cliente c9 = new Cliente("Daniela Lopez", "Urbi", "5 febrero", "402B", "6445789023");
             Cliente c10 = new Cliente("Karla Silva", "Urbi", "5 febrero", "573B", "64417665023");
+            Cliente c11 = new Cliente("Tilina ", "Urbi", "San Ancelmo", "575A", "6441769038");
 
             conexionBD.getEM().getTransaction().begin();
-            List<Cliente> clientes = Arrays.asList(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10);
+            List<Cliente> clientes = Arrays.asList(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11);
             for (Cliente cliente : clientes) {
                 conexionBD.getEM().persist(cliente);
             }
@@ -129,6 +130,31 @@ public class ClienteDAO implements IClienteDAO {
         } catch (Exception e) {
             e.printStackTrace();
             throw new PersistenceException("Error al obtener clientes con contratos atrasados: " + e.getMessage());
+        }
+
+        return clientes;
+    }
+    
+    @Override
+     public List<Cliente> obtenerClientesPorPeriodo(LocalDate fechaInicio, LocalDate fechaFin) throws SQLException {
+        List<Cliente> clientes = new ArrayList<>();
+
+        try {
+            String consulta = "SELECT DISTINCT cliente "
+                    + "FROM Cargo c "
+                    + "JOIN ContratoServicio contrato ON c.contratoServicio.id = contrato.id "
+                    + "JOIN Cliente cliente ON contrato.cliente.id = cliente.id "
+                    + "WHERE c.deuda > 0 "
+                    + "AND c.fecha BETWEEN :fechaInicio AND :fechaFin";
+
+            Query query = conexionBD.getEM().createQuery(consulta);
+            query.setParameter("fechaInicio", java.sql.Date.valueOf(fechaInicio));
+            query.setParameter("fechaFin", java.sql.Date.valueOf(fechaFin));
+
+            clientes = query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new PersistenceException("Error al obtener clientes por período: " + e.getMessage());
         }
 
         return clientes;
