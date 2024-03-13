@@ -131,6 +131,15 @@ public class ContratoServicio {
         this.cliente = cliente;
     }
 
+    public ContratoServicio(float montoPagar, int diaAPagar, Plan plan, Cliente cliente) {
+        this.montoPagar = montoPagar;
+        this.diaAPagar = diaAPagar;
+        this.plan = plan;
+        this.cliente = cliente;
+    }
+    
+    
+
     public ContratoServicio(float montoPagar, int diaAPagar, List<ProductoCliente> productosClientes, Plan plan, List<Cita> citas, List<Cargo> cargos, Cliente cliente) {
         this.montoPagar = montoPagar;
         this.diaAPagar = diaAPagar;
@@ -139,6 +148,11 @@ public class ContratoServicio {
         this.citas = citas;
         this.cargos = cargos;
         this.cliente = cliente;
+    }
+
+    @Override
+    public String toString() {
+        return "ContratoServicio{" + "id=" + id + ", montoPagar=" + montoPagar + ", diaAPagar=" + diaAPagar + ", productosClientes=" + productosClientes + ", plan=" + plan + ", citas=" + citas + ", cargos=" + cargos + ", cliente=" + cliente + '}';
     }
 
 

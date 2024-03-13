@@ -26,11 +26,11 @@ public class Principal {
         ConexionBD conexionBD = new ConexionBD("adconexiones");
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-        conexionBD.getEM().getTransaction().begin();
-        List<ContratoServicio> c = new ArrayList<>();
-        Cliente cliente = new Cliente("c", "c1", "c2", "c3", "c4", c);
-        conexionBD.getEM().persist(cliente);
-        conexionBD.getEM().getTransaction().commit();
+//        conexionBD.getEM().getTransaction().begin();
+//        List<ContratoServicio> c = new ArrayList<>();
+//        Cliente cliente = new Cliente("c", "c1", "c2", "c3", "c4", c);
+//        conexionBD.getEM().persist(cliente);
+//        conexionBD.getEM().getTransaction().commit();
 
     }
 }

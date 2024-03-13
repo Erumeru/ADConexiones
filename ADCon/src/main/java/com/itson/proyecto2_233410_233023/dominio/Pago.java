@@ -108,6 +108,13 @@ public class Pago implements Serializable {
         this.trabajadores = trabajadores;
     }
 
+    public Pago(float costo, String especificaciones, Date fecha, Cargo cargo) {
+        this.costo = costo;
+        this.especificaciones = especificaciones;
+        this.fecha = fecha;
+        this.cargo = cargo;
+    }
+
     public Cargo getCargo() {
         return cargo;
     }

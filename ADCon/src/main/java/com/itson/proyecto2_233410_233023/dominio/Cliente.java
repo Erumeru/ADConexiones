@@ -21,7 +21,7 @@ public class Cliente implements Serializable {
     private Long id;
     @Column(name = "nombreCliente", nullable = false, length = 100)
     private String nombreCliente;
-    
+
     @Column(name = "coloniaCliente", nullable = false, length = 100)
 
     private String coloniaCliente;
@@ -34,11 +34,9 @@ public class Cliente implements Serializable {
 
     @Column(name = "telefonoCliente", nullable = false, length = 100)
     private String telefonoCliente;
-    
+
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
     private List<ContratoServicio> contratosServicio;
-    
-    
 
     public Long getId() {
         return id;
@@ -55,8 +53,6 @@ public class Cliente implements Serializable {
     public void setContratosServicio(List<ContratoServicio> contratosServicio) {
         this.contratosServicio = contratosServicio;
     }
-    
-    
 
     // Constructor, getters y setters
     public Cliente() {
@@ -82,10 +78,14 @@ public class Cliente implements Serializable {
         this.contratosServicio = contratosServicio;
     }
 
-    
+    public Cliente(String nombreCliente, String coloniaCliente, String calleCliente, String numeroCliente, String telefonoCliente) {
+        this.nombreCliente = nombreCliente;
+        this.coloniaCliente = coloniaCliente;
+        this.calleCliente = calleCliente;
+        this.numeroCliente = numeroCliente;
+        this.telefonoCliente = telefonoCliente;
+    }
 
-    
-    
     // Getters y setters
     public Long getIdCliente() {
         return id;
@@ -133,5 +133,10 @@ public class Cliente implements Serializable {
 
     public void setTelefonoCliente(String telefonoCliente) {
         this.telefonoCliente = telefonoCliente;
+    }
+
+    @Override
+    public String toString() {
+        return "Cliente{" + "id=" + id + ", nombreCliente=" + nombreCliente + ", coloniaCliente=" + coloniaCliente + ", calleCliente=" + calleCliente + ", numeroCliente=" + numeroCliente + ", telefonoCliente=" + telefonoCliente + ", contratosServicio=" + contratosServicio + '}';
     }
 }
