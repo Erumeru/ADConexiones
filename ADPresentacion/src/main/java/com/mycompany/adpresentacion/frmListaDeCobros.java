@@ -4,20 +4,31 @@
  */
 package com.mycompany.adpresentacion;
 
+import com.itson.proyecto2_233410_233023.dominio.Cargo;
+import com.itson.proyecto2_233410_233023.dominio.Cliente;
+import com.itson.proyecto2_233410_233023.dominio.ContratoServicio;
+import com.itson.proyecto2_233410_233023.implementaciones.ConexionBD;
+import com.mycompany.adnegocio.CargoDAO;
+import com.mycompany.adnegocio.ClienteDAO;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import utils.RegistroPrueba;
 import utils.utilsGraficos;
 
 /**
@@ -27,34 +38,22 @@ import utils.utilsGraficos;
 public class frmListaDeCobros extends javax.swing.JFrame {
 
     private Dimension dim;
-    private List<RegistroPrueba> regri = new ArrayList<>();
+    private ClienteDAO cliente;
 
     /**
      * Creates new form frmListaDeCobros
      */
     public frmListaDeCobros() {
+        ConexionBD conexionBD = new ConexionBD("adconexiones");
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         dim = toolkit.getScreenSize();
         initComponents();
+
+        cliente = new ClienteDAO(conexionBD);
+
         jPanel1.repaint();
         jLabel1.repaint();
-
-        regri.add(new RegistroPrueba(1, "Juan", "Calle 123", "123456789", "2024-03-12", 0, 1000.0));
-        regri.add(new RegistroPrueba(2, "María", "Avenida XYZ", "987654321", "2024-03-12", 2, 1500.0));
-        regri.add(new RegistroPrueba(3, "Pedro", "Av. Principal", "456789123", "2024-03-12", 1, 1200.0));
-        regri.add(new RegistroPrueba(4, "Ana", "Calle Secundaria", "321654987", "2024-03-12", 3, 1800.0));
-        regri.add(new RegistroPrueba(5, "Luis", "Av. Central", "789123456", "2024-03-12", 0, 900.0));
-        regri.add(new RegistroPrueba(6, "Lucía", "Calle Principal", "159357246", "2024-03-12", 2, 1300.0));
-        regri.add(new RegistroPrueba(7, "Carlos", "Av. Grande", "753951486", "2024-03-12", 0, 1100.0));
-        regri.add(new RegistroPrueba(8, "Laura", "Av. Pequeña", "852369147", "2024-03-12", 1, 1400.0));
-        regri.add(new RegistroPrueba(9, "Miguel", "Calle Larga", "369852147", "2024-03-12", 4, 2000.0));
-        regri.add(new RegistroPrueba(10, "Elena", "Calle Estrecha", "147258369", "2024-03-12", 0, 950.0));
-        regri.add(new RegistroPrueba(11, "Mario", "Av. Angosta", "123789456", "2024-03-12", 2, 1600.0));
-        regri.add(new RegistroPrueba(12, "Sofía", "Calle Ancha", "456123789", "2024-03-12", 1, 1350.0));
-        regri.add(new RegistroPrueba(13, "Daniel", "Av. Amplia", "789456123", "2024-03-12", 0, 1050.0));
-        regri.add(new RegistroPrueba(14, "Valeria", "Calle Cerrada", "369147852", "2024-03-12", 3, 1900.0));
-        regri.add(new RegistroPrueba(15, "Jorge", "Av. Abierta", "147852369", "2024-03-12", 0, 1000.0));
-
+        crearTablas();
         llenarTabla();
         tableCobros.getTableHeader().setOpaque(false);
         tableCobros.getTableHeader().setBackground(new Color(233, 42, 42));
@@ -64,6 +63,7 @@ public class frmListaDeCobros extends javax.swing.JFrame {
 
     public void crearTablas() {
         DefaultTableModel model = new DefaultTableModel();
+        DefaultTableModel mode2 = new DefaultTableModel();
         model.addColumn("ID");
         model.addColumn("Nombre");
         model.addColumn("Dirección");
@@ -71,8 +71,15 @@ public class frmListaDeCobros extends javax.swing.JFrame {
         model.addColumn("Fecha");
         model.addColumn("Atraso");
         model.addColumn("Pago");
+        mode2.addColumn("ID");
+        mode2.addColumn("Nombre");
+        mode2.addColumn("Dirección");
+        mode2.addColumn("Teléfono");
+        mode2.addColumn("Fecha");
+        mode2.addColumn("Atraso");
+        mode2.addColumn("Pago");
         tableCobros.setModel(model);
-        tableCobrosAtrasados.setModel(model);
+        tableCobrosAtrasados.setModel(mode2);
 
     }
 
@@ -82,38 +89,70 @@ public class frmListaDeCobros extends javax.swing.JFrame {
         model.setRowCount(0);
         modelAtrasados.setRowCount(0);
         //Aqui en vez de Registro Prueba seria Cargo
-        List<RegistroPrueba> registroPruebasAtrasados = regri;
-        List<RegistroPrueba> registroPruebasNormales = regri;
-        for (RegistroPrueba registro : registroPruebasNormales) {
-            model.addRow(new Object[]{
-                registro.getId(),
-                registro.getNombre(),
-                registro.getDireccion(),
-                registro.getTelefono(),
-                registro.getFecha(),
-                registro.getAtraso(),
-                registro.getPago()
-            });
+
+        List<Cliente> clientesAtrasados = new ArrayList<>();
+        List<Cliente> clientesNormales = new ArrayList<>();
+        try {
+            clientesAtrasados = cliente.obtenerClientesAtrasados();
+            clientesNormales = cliente.obtenerClientesSemana();
+        } catch (SQLException ex) {
+            Logger.getLogger(frmListaDeCobros.class.getName()).log(Level.SEVERE, null, ex);
         }
-        tableCobros.setModel(model);
-        if (registroPruebasAtrasados.isEmpty()) {
-            System.out.println("invisible");
-            scrollAtrasados.setVisible(false);
-        } else {
-            for (RegistroPrueba registro : registroPruebasAtrasados) {
-                modelAtrasados.addRow(new Object[]{
-                    registro.getId(),
-                    registro.getNombre(),
-                    registro.getDireccion(),
-                    registro.getTelefono(),
-                    registro.getFecha(),
-                    registro.getAtraso(),
-                    registro.getPago()
+        for (Cliente clientes : clientesNormales) {
+
+            List<ContratoServicio> contratos = clientes.getContratosServicio();
+            for (ContratoServicio contrato : contratos) {
+                List<Cargo> cargos = contrato.getCargos();
+                float costo = 0;
+                Date d = cargos.get(0).getFecha();
+                for (Cargo cargo : cargos) {
+                    costo += cargo.getDeuda();
+                    if (d.before(cargo.getFecha())) {
+                        d = cargo.getFecha();
+                    }
+                }
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                model.addRow(new Object[]{
+                    clientes.getId(),
+                    clientes.getNombreCliente(),
+                    clientes.getNumeroCliente() + " " + clientes.getColoniaCliente() + " " + clientes.getCalleCliente(),
+                    clientes.getTelefonoCliente(),
+                    formatter.format(d),
+                    0,
+                    costo
                 });
             }
         }
+        for (Cliente clientes : clientesAtrasados) {
+            System.out.println(clientes.getNombreCliente());
+            List<ContratoServicio> contratos = clientes.getContratosServicio();
+            for (ContratoServicio contrato : contratos) {
+                List<Cargo> cargos = contrato.getCargos();
+                float costo = 0;
 
-        tableCobrosAtrasados.setModel(model);
+                Date d = cargos.get(0).getFecha();
+                for (Cargo cargo : cargos) {
+                    costo += cargo.getDeuda();
+                    if (d.before(cargo.getFecha())) {
+                        d = cargo.getFecha();
+                    }
+                }
+                long diferenciaMilisegundos = new Date().getTime() - d.getTime();
+                long diferenciaDias = diferenciaMilisegundos / (24 * 60 * 60 * 1000);
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                modelAtrasados.addRow(new Object[]{
+                    clientes.getId(),
+                    clientes.getNombreCliente(),
+                    clientes.getNumeroCliente() + " " + clientes.getColoniaCliente() + " " + clientes.getCalleCliente(),
+                    clientes.getTelefonoCliente(),
+                    formatter.format(d),
+                    diferenciaDias,
+                    costo
+                });
+            }
+        }
+        tableCobros.setModel(model);
+        tableCobrosAtrasados.setModel(modelAtrasados);
     }
 
     /**
@@ -137,7 +176,6 @@ public class frmListaDeCobros extends javax.swing.JFrame {
         btnGenerarPdf = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1280, 720));
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -208,6 +246,11 @@ public class frmListaDeCobros extends javax.swing.JFrame {
                 btnPeriodoMouseReleased(evt);
             }
         });
+        btnPeriodo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPeriodoActionPerformed(evt);
+            }
+        });
 
         btnGenerarPdf.setIcon(new javax.swing.ImageIcon(getClass().getResource("/BotonGenerarPdf.png"))); // NOI18N
         btnGenerarPdf.setBorderPainted(false);
@@ -219,6 +262,11 @@ public class frmListaDeCobros extends javax.swing.JFrame {
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btnGenerarPdfMouseExited(evt);
+            }
+        });
+        btnGenerarPdf.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGenerarPdfActionPerformed(evt);
             }
         });
 
@@ -304,6 +352,14 @@ public class frmListaDeCobros extends javax.swing.JFrame {
     private void btnGenerarPdfMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGenerarPdfMouseExited
         btnGenerarPdf.setIcon(new ImageIcon(getClass().getResource("/BotonGenerarPdf.png")));
     }//GEN-LAST:event_btnGenerarPdfMouseExited
+
+    private void btnGenerarPdfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarPdfActionPerformed
+       JOptionPane.showMessageDialog(rootPane, "En construcion solo era el 40%");
+    }//GEN-LAST:event_btnGenerarPdfActionPerformed
+
+    private void btnPeriodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPeriodoActionPerformed
+       JOptionPane.showMessageDialog(rootPane, "En construcion solo era el 40%");
+    }//GEN-LAST:event_btnPeriodoActionPerformed
 
     /**
      * @param args the command line arguments

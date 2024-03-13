@@ -94,7 +94,7 @@ public class ClienteDAO implements IClienteDAO {
                     + "WHERE c.deuda > 0 AND c.fecha < CURRENT_DATE";
 
             Query query = conexionBD.getEM().createQuery(consulta);
-
+            System.out.println(consulta);
             clientes = query.getResultList();
         } catch (NoResultException e) {
             // No se encontraron resultados
