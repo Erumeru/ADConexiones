@@ -42,6 +42,14 @@ public class Cargo implements Serializable {
         // Constructor por defecto necesario para JPA
     }
 
+    public Cargo(float deuda, Date fecha, ContratoServicio contratoServicio) {
+        this.deuda = deuda;
+        this.fecha = fecha;
+        this.contratoServicio = contratoServicio;
+    }
+    
+    
+
     public Cargo(Long id, float deuda, Date fecha, List<Pago> pagos, ContratoServicio contratoServicio) {
         this.id = id;
         this.deuda = deuda;

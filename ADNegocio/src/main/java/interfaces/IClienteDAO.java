@@ -1,0 +1,31 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
+ */
+package interfaces;
+
+import com.itson.proyecto2_233410_233023.dominio.Cliente;
+import java.sql.SQLException;
+import java.util.List;
+
+/**
+ *
+ * @author berly
+ */
+public interface IClienteDAO {
+
+    /**
+     * Método para realizar la inserción masiva de 10 clientes a la base de
+     * datos.
+     *
+     * @return Valor booleano.
+     */
+    boolean insercionMasivaPersonas();
+    
+    public Cliente obtenerPersona(Long id);
+    
+    public List<Cliente> obtenerClientesAtrasados() throws SQLException;
+
+    public List<Cliente> obtenerClientesSemana() throws SQLException;
+
+}
