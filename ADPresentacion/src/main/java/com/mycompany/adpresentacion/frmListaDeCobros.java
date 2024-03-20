@@ -128,8 +128,9 @@ public class frmListaDeCobros extends javax.swing.JFrame {
             List<ContratoServicio> contratos = clientes.getContratosServicio();
             for (ContratoServicio contrato : contratos) {
                 List<Cargo> cargos = contrato.getCargos();
+                if (cargos!=null||!cargos.isEmpty()) {
+                if(cargos.get(0)!=null){
                 float costo = 0;
-
                 Date d = cargos.get(0).getFecha();
                 for (Cargo cargo : cargos) {
                     costo += cargo.getDeuda();
@@ -149,6 +150,7 @@ public class frmListaDeCobros extends javax.swing.JFrame {
                     diferenciaDias,
                     costo
                 });
+                }}
             }
         }
         tableCobros.setModel(model);
@@ -355,6 +357,9 @@ public class frmListaDeCobros extends javax.swing.JFrame {
 
     private void btnGenerarPdfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarPdfActionPerformed
        JOptionPane.showMessageDialog(rootPane, "En construcion solo era el 40%");
+       
+       
+       
     }//GEN-LAST:event_btnGenerarPdfActionPerformed
 
     private void btnPeriodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPeriodoActionPerformed
