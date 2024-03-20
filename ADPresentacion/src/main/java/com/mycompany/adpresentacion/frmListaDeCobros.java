@@ -14,11 +14,16 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
@@ -29,6 +34,13 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 import utils.utilsGraficos;
 
 /**
@@ -39,6 +51,7 @@ public class frmListaDeCobros extends javax.swing.JFrame {
 
     private Dimension dim;
     private ClienteDAO cliente;
+    private List<Cliente> listaPDF;
 
     /**
      * Creates new form frmListaDeCobros
@@ -50,6 +63,7 @@ public class frmListaDeCobros extends javax.swing.JFrame {
         initComponents();
 
         cliente = new ClienteDAO(conexionBD);
+        listaPDF = new ArrayList<Cliente>();
 
         jPanel1.repaint();
         jLabel1.repaint();
@@ -279,9 +293,6 @@ public class frmListaDeCobros extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(33, 33, 33)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(29, 29, 29)
                         .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 1210, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -297,7 +308,10 @@ public class frmListaDeCobros extends javax.swing.JFrame {
                                 .addComponent(btnPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(btnGenerarPdf, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(scrollAtrasados, javax.swing.GroupLayout.PREFERRED_SIZE, 1213, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(scrollAtrasados, javax.swing.GroupLayout.PREFERRED_SIZE, 1213, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addComponent(jLabel1)))
                 .addGap(36, 36, 36))
         );
         jPanel1Layout.setVerticalGroup(
@@ -307,7 +321,7 @@ public class frmListaDeCobros extends javax.swing.JFrame {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(21, 21, 21)
                 .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20)
+                .addGap(23, 23, 23)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(20, 20, 20)
                 .addComponent(txtAtrasados, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -356,8 +370,67 @@ public class frmListaDeCobros extends javax.swing.JFrame {
     }//GEN-LAST:event_btnGenerarPdfMouseExited
 
     private void btnGenerarPdfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarPdfActionPerformed
-       JOptionPane.showMessageDialog(rootPane, "En construcion solo era el 40%");
        
+        int opcion = JOptionPane.showConfirmDialog(null, "¿Está seguro de imprimir el pdf?", "Confirmar", JOptionPane.YES_NO_OPTION);
+
+        if (opcion == JOptionPane.YES_OPTION) {
+            List<JasperReporte> pdf = new ArrayList<JasperReporte>();
+            if (listaPDF.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "La tabla esta vacia");
+                return;
+            }
+            for (Cliente cliente : listaPDF) {
+                 JasperReporte reporte = new JasperReporte();
+                 
+                 long id = cliente.getId();
+                 String idS = String.valueOf(id);
+                 
+//                 String nombreCompleto = persona.getNombre()+" "+persona.getApellidoP()+" "+persona.getApellidoM();
+                String direccion = cliente.getNumeroCliente()+" "+cliente.getCalleCliente()+" "+cliente.getColoniaCliente();
+
+                reporte.setId(idS);
+                reporte.setNombre(cliente.getNombreCliente());
+                reporte.setDireccion(direccion);
+                reporte.setTelefono(cliente.getTelefonoCliente());
+//                reporte.setFecha();
+//                reporte.setAtraso();
+//                reporte.setPago();
+//                reporte.setCosto(String.valueOf(tramite.getCosto()));
+//                reporte.setPeriodo(tramite.getFechaExpedicion().toString());
+                
+                pdf.add(reporte);
+            }
+            try {
+                
+                Map parametro = new HashMap();
+                
+                LocalDateTime fechaHoraActual = LocalDateTime.now();
+                DateTimeFormatter formatEscrito = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy, hh:mm a");
+                String fechaHoraEscrita = fechaHoraActual.format(formatEscrito);
+                parametro.put("fecha_generacion",fechaHoraEscrita);
+                
+                parametro.put("historial", "Reporte General");
+                
+                JRBeanCollectionDataSource beanColDataSource = new JRBeanCollectionDataSource(pdf);
+
+                 //Cargar el archivo JRXML del reporte
+                InputStream reportFile = getClass().getResourceAsStream("/reportePDF_1.jrxml");
+                JasperReport jasperReport = JasperCompileManager.compileReport(reportFile);
+
+                 //Llenar el reporte con los datos
+                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,  parametro, beanColDataSource);
+                
+                
+                JasperViewer visu= new JasperViewer(jasperPrint, false);
+                visu.setVisible(true);
+                // Visualizar el reporte
+                JasperExportManager.exportReportToPdfFile(jasperPrint, "./reporteTramites.pdf");
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+                                                    
+
        
        
     }//GEN-LAST:event_btnGenerarPdfActionPerformed
