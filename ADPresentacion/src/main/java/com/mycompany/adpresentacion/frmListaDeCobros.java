@@ -4,6 +4,7 @@
  */
 package com.mycompany.adpresentacion;
 
+import reportes.JasperReporte;
 import com.itson.proyecto2_233410_233023.dominio.Cargo;
 import com.itson.proyecto2_233410_233023.dominio.Cliente;
 import com.itson.proyecto2_233410_233023.dominio.ContratoServicio;
@@ -51,7 +52,8 @@ public class frmListaDeCobros extends javax.swing.JFrame {
 
     private Dimension dim;
     private ClienteDAO cliente;
-    private List<Cliente> listaPDF;
+    private List<JasperReporte> listaPDFN;
+    private List<JasperReporte> listaPDFA;
 
     /**
      * Creates new form frmListaDeCobros
@@ -63,18 +65,46 @@ public class frmListaDeCobros extends javax.swing.JFrame {
         initComponents();
 
         cliente = new ClienteDAO(conexionBD);
-        listaPDF = new ArrayList<Cliente>();
-
+        listaPDFA = new ArrayList<>();
+        listaPDFN = new ArrayList<>();
         jPanel1.repaint();
         jLabel1.repaint();
         crearTablas();
-        llenarTabla();
         tableCobros.getTableHeader().setOpaque(false);
         tableCobros.getTableHeader().setBackground(new Color(233, 42, 42));
         tableCobros.getTableHeader().setForeground(new Color(0, 0, 0));
         tableCobros.repaint();
+        List<Cliente> clientesAtrasados = new ArrayList<>();
+        List<Cliente> clientesNormales = new ArrayList<>();
+        
+        try {
+            clientesAtrasados = cliente.obtenerClientesAtrasados();
+            clientesNormales = cliente.obtenerClientesSemana();
+        } catch (SQLException ex) {
+            Logger.getLogger(frmListaDeCobros.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        llenarTabla(clientesAtrasados,clientesNormales);
     }
+    public frmListaDeCobros(List<Cliente> clientesAtrasados , List<Cliente> clientesNormales ) {
+        ConexionBD conexionBD = new ConexionBD("adconexiones");
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        dim = toolkit.getScreenSize();
+        initComponents();
 
+        cliente = new ClienteDAO(conexionBD);
+        listaPDFA = new ArrayList<>();
+        listaPDFN = new ArrayList<>();
+
+        jPanel1.repaint();
+        jLabel1.repaint();
+        crearTablas();
+        
+        tableCobros.getTableHeader().setOpaque(false);
+        tableCobros.getTableHeader().setBackground(new Color(233, 42, 42));
+        tableCobros.getTableHeader().setForeground(new Color(0, 0, 0));
+        tableCobros.repaint();
+        llenarTabla(clientesAtrasados,clientesNormales);
+    }
     public void crearTablas() {
         DefaultTableModel model = new DefaultTableModel();
         DefaultTableModel mode2 = new DefaultTableModel();
@@ -94,24 +124,17 @@ public class frmListaDeCobros extends javax.swing.JFrame {
         mode2.addColumn("Pago");
         tableCobros.setModel(model);
         tableCobrosAtrasados.setModel(mode2);
-
     }
 
-    public void llenarTabla() {
+    public void llenarTabla(List<Cliente> clientesAtrasados , List<Cliente> clientesNormales ) {
         DefaultTableModel model = (DefaultTableModel) tableCobros.getModel();
         DefaultTableModel modelAtrasados = (DefaultTableModel) tableCobrosAtrasados.getModel();
         model.setRowCount(0);
         modelAtrasados.setRowCount(0);
         //Aqui en vez de Registro Prueba seria Cargo
-
-        List<Cliente> clientesAtrasados = new ArrayList<>();
-        List<Cliente> clientesNormales = new ArrayList<>();
-        try {
-            clientesAtrasados = cliente.obtenerClientesAtrasados();
-            clientesNormales = cliente.obtenerClientesSemana();
-        } catch (SQLException ex) {
-            Logger.getLogger(frmListaDeCobros.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        listaPDFA = new ArrayList<>();
+        listaPDFN = new ArrayList<>();
+        
         for (Cliente clientes : clientesNormales) {
 
             List<ContratoServicio> contratos = clientes.getContratosServicio();
@@ -135,12 +158,24 @@ public class frmListaDeCobros extends javax.swing.JFrame {
                     0,
                     costo
                 });
+                
+                JasperReporte reporte = new JasperReporte();
+                reporte.setId(String.valueOf(clientes.getId()));
+                reporte.setNombre(clientes.getNombreCliente());
+                reporte.setDireccion(clientes.getNumeroCliente() + " " + clientes.getColoniaCliente() + " " + clientes.getCalleCliente());
+                reporte.setTelefono(clientes.getTelefonoCliente());
+                reporte.setFecha(formatter.format(d));
+                reporte.setAtraso(String.valueOf(0));
+                reporte.setPago(String.valueOf(costo));
+                
+                listaPDFN.add(reporte);
+                
             }
         }
         for (Cliente clientes : clientesAtrasados) {
             System.out.println(clientes.getNombreCliente());
             List<ContratoServicio> contratos = clientes.getContratosServicio();
-            for (ContratoServicio contrato : contratos) {
+              for (ContratoServicio contrato : contratos) {
                 List<Cargo> cargos = contrato.getCargos();
                 if (cargos!=null||!cargos.isEmpty()) {
                 if(cargos.get(0)!=null){
@@ -164,6 +199,18 @@ public class frmListaDeCobros extends javax.swing.JFrame {
                     diferenciaDias,
                     costo
                 });
+                
+                JasperReporte reporte = new JasperReporte();
+                reporte.setId(String.valueOf(clientes.getId()));
+                reporte.setNombre(clientes.getNombreCliente());
+                reporte.setDireccion(clientes.getNumeroCliente() + " " + clientes.getColoniaCliente() + " " + clientes.getCalleCliente());
+                reporte.setTelefono(clientes.getTelefonoCliente());
+                reporte.setFecha(formatter.format(d));
+                reporte.setAtraso(String.valueOf(diferenciaDias));
+                reporte.setPago(String.valueOf(costo));
+                
+                listaPDFA.add(reporte);
+                
                 }}
             }
         }
@@ -370,36 +417,48 @@ public class frmListaDeCobros extends javax.swing.JFrame {
     }//GEN-LAST:event_btnGenerarPdfMouseExited
 
     private void btnGenerarPdfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarPdfActionPerformed
+        
+        List <JasperReporte> pdf = new ArrayList<>();
+        
+        int opcionN = JOptionPane.showConfirmDialog(null, "¿Está seguro de imprimir el pdf?", "Confirmar", JOptionPane.YES_NO_OPTION);
+
+        if (opcionN == JOptionPane.YES_OPTION) {
+
+        // Muestra el cuadro de diálogo y obtiene la opción seleccionada por el usuario
+        String opcion = (String) JOptionPane.showInputDialog(
+                null, // Componente padre, en este caso ninguno
+                "Seleccione una opción:", // Mensaje a mostrar
+                "Seleccionar opción", // Título del cuadro de diálogo
+                JOptionPane.QUESTION_MESSAGE, // Tipo de mensaje
+                null, // Icono personalizado (en este caso ninguno)
+                new String[]{"Atrasados", "Normales"}, // Opciones a mostrar
+                "Atrasados"); // Opción por defecto seleccionada
+
+        // Verifica la opción seleccionada por el usuario y muestra un mensaje correspondiente
+        if (opcion != null) {
+            
+            if(opcion.equalsIgnoreCase("Atrasados")){
+                pdf = listaPDFA;
+            }else{
+                pdf = listaPDFN;
+            }
+            
+        } else {
+            // Si el usuario cierra el cuadro de diálogo sin seleccionar una opción
+            JOptionPane.showMessageDialog(null, "No has seleccionado ninguna opción");
+            return;
+        }
+        
+        if(pdf.isEmpty()){
+            JOptionPane.showMessageDialog(this, "La lista esta vacía");
+            return;
+        }
        
-        int opcion = JOptionPane.showConfirmDialog(null, "¿Está seguro de imprimir el pdf?", "Confirmar", JOptionPane.YES_NO_OPTION);
-
-        if (opcion == JOptionPane.YES_OPTION) {
-            List<JasperReporte> pdf = new ArrayList<JasperReporte>();
-            if (listaPDF.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "La tabla esta vacia");
-                return;
-            }
-            for (Cliente cliente : listaPDF) {
-                 JasperReporte reporte = new JasperReporte();
-                 
-                 long id = cliente.getId();
-                 String idS = String.valueOf(id);
-                 
-//                 String nombreCompleto = persona.getNombre()+" "+persona.getApellidoP()+" "+persona.getApellidoM();
-                String direccion = cliente.getNumeroCliente()+" "+cliente.getCalleCliente()+" "+cliente.getColoniaCliente();
-
-                reporte.setId(idS);
-                reporte.setNombre(cliente.getNombreCliente());
-                reporte.setDireccion(direccion);
-                reporte.setTelefono(cliente.getTelefonoCliente());
-//                reporte.setFecha();
-//                reporte.setAtraso();
-//                reporte.setPago();
-//                reporte.setCosto(String.valueOf(tramite.getCosto()));
-//                reporte.setPeriodo(tramite.getFechaExpedicion().toString());
-                
-                pdf.add(reporte);
-            }
+//            List<JasperReporte> pdf = new ArrayList<JasperReporte>();
+            
+            
+            
+            
             try {
                 
                 Map parametro = new HashMap();
@@ -407,16 +466,19 @@ public class frmListaDeCobros extends javax.swing.JFrame {
                 LocalDateTime fechaHoraActual = LocalDateTime.now();
                 DateTimeFormatter formatEscrito = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy, hh:mm a");
                 String fechaHoraEscrita = fechaHoraActual.format(formatEscrito);
-                parametro.put("fecha_generacion",fechaHoraEscrita);
+                parametro.put("fecha_general",fechaHoraEscrita);
                 
-                parametro.put("historial", "Reporte General");
+                parametro.put("razon", "Reporte General: "+opcion);
                 
                 JRBeanCollectionDataSource beanColDataSource = new JRBeanCollectionDataSource(pdf);
-
+                System.out.println("hola");
                  //Cargar el archivo JRXML del reporte
-                InputStream reportFile = getClass().getResourceAsStream("/reportePDF_1.jrxml");
+                InputStream reportFile = getClass().getResourceAsStream("/reporte4.jrxml");
+                System.out.println("hola2");
+                
                 JasperReport jasperReport = JasperCompileManager.compileReport(reportFile);
-
+                System.out.println("hola3");
+                
                  //Llenar el reporte con los datos
                 JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,  parametro, beanColDataSource);
                 
@@ -424,7 +486,7 @@ public class frmListaDeCobros extends javax.swing.JFrame {
                 JasperViewer visu= new JasperViewer(jasperPrint, false);
                 visu.setVisible(true);
                 // Visualizar el reporte
-                JasperExportManager.exportReportToPdfFile(jasperPrint, "./reporteTramites.pdf");
+                JasperExportManager.exportReportToPdfFile(jasperPrint, "./reporte.pdf");
             } catch (Exception e) {
                 System.out.println(e);
             }
@@ -436,7 +498,9 @@ public class frmListaDeCobros extends javax.swing.JFrame {
     }//GEN-LAST:event_btnGenerarPdfActionPerformed
 
     private void btnPeriodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPeriodoActionPerformed
-       JOptionPane.showMessageDialog(rootPane, "En construcion solo era el 40%");
+       frmPeriodos f=new frmPeriodos();
+       f.setVisible(true);
+       this.dispose();
     }//GEN-LAST:event_btnPeriodoActionPerformed
 
     /**
