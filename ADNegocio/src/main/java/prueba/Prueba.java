@@ -58,12 +58,12 @@ public class Prueba {
         //AGREGAR CARGO
         CargoDAO cargo = new CargoDAO(conexionBD);
         //float deuda, Date fecha, ContratoServicio contratoServicio
-        cargo.generarCargo(new Cargo(300F, new Date(124, 2, 11), contrato.obtenerContrato(cliente.obtenerPersona(1L))));
-        cargo.generarCargo(new Cargo(300F, new Date(124, 2, 11), contrato.obtenerContrato(cliente.obtenerPersona(2L))));
-        cargo.generarCargo(new Cargo(300F, new Date(124, 2, 10), contrato.obtenerContrato(cliente.obtenerPersona(3L))));
-        cargo.generarCargo(new Cargo(300F, new Date(124, 2, 9), contrato.obtenerContrato(cliente.obtenerPersona(4L))));
-        cargo.generarCargo(new Cargo(300F, new Date(124, 2, 12), contrato.obtenerContrato(cliente.obtenerPersona(5L))));
-        cargo.generarCargo(new Cargo(300F, new Date(124, 2, 12), contrato.obtenerContrato(cliente.obtenerPersona(6L))));
+        cargo.generarCargo(new Cargo(300F, new Date(124, 3, 9), contrato.obtenerContrato(cliente.obtenerPersona(1L))));
+        cargo.generarCargo(new Cargo(300F, new Date(124, 3, 10), contrato.obtenerContrato(cliente.obtenerPersona(2L))));
+        cargo.generarCargo(new Cargo(300F, new Date(124, 3, 11), contrato.obtenerContrato(cliente.obtenerPersona(3L))));
+        cargo.generarCargo(new Cargo(300F, new Date(124, 3, 12), contrato.obtenerContrato(cliente.obtenerPersona(4L))));
+        cargo.generarCargo(new Cargo(300F, new Date(124, 3, 13), contrato.obtenerContrato(cliente.obtenerPersona(5L))));
+        cargo.generarCargo(new Cargo(300F, new Date(124, 3, 16), contrato.obtenerContrato(cliente.obtenerPersona(6L))));
         cargo.generarCargo(new Cargo(300F, new Date(124, 2, 13), contrato.obtenerContrato(cliente.obtenerPersona(7L))));
         cargo.generarCargo(new Cargo(300F, new Date(124, 2, 13), contrato.obtenerContrato(cliente.obtenerPersona(8L))));
         cargo.generarCargo(new Cargo(300F, new Date(124, 2, 15), contrato.obtenerContrato(cliente.obtenerPersona(9L))));

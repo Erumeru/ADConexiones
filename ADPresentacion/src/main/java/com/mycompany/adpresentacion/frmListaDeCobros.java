@@ -244,6 +244,11 @@ public class frmListaDeCobros extends javax.swing.JFrame {
         jPanel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo.png"))); // NOI18N
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel1MouseClicked(evt);
+            }
+        });
 
         txtAtrasados.setBackground(new java.awt.Color(220, 222, 228));
         txtAtrasados.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -502,6 +507,12 @@ public class frmListaDeCobros extends javax.swing.JFrame {
        f.setVisible(true);
        this.dispose();
     }//GEN-LAST:event_btnPeriodoActionPerformed
+
+    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
+        // TODO add your handling code here:
+        this.dispose();
+        new frmPrincipal().setVisible(true);
+    }//GEN-LAST:event_jLabel1MouseClicked
 
     /**
      * @param args the command line arguments
