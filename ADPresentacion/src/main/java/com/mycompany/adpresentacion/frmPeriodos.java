@@ -78,10 +78,10 @@ public class frmPeriodos extends javax.swing.JFrame {
             }
         });
 
-        btnPeriodo1.setBackground(new java.awt.Color(235, 168, 23));
-        btnPeriodo1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnPeriodo1.setText("Regresar");
+        btnPeriodo1.setBackground(new java.awt.Color(235, 168, 23));
         btnPeriodo1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
+        btnPeriodo1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnPeriodo1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPeriodo1ActionPerformed(evt);
