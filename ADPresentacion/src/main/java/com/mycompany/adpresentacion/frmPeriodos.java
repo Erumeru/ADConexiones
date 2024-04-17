@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -163,23 +164,41 @@ public class frmPeriodos extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private Boolean fechasValidas(LocalDate fechaInicio, LocalDate fechaFin) {
+        // Comparar las fechas
+        if (fechaInicio.isAfter(fechaFin)) {
+            // La fecha de inicio es después de la fecha de fin
+            JOptionPane.showMessageDialog(null, """
+                                                No se pueden seleccionar los periodos de esta manera.
+                                                La fecha de inicio es despues de la fecha de fin.""",
+                    "Error en las fechas",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     private void btnPeriodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPeriodoActionPerformed
         LocalDate fechaInicio = this.fechaInicio.getDate();
         LocalDate fechaD = this.fechaFin.getDate();
 
-        if (fechaInicio != null && fechaD != null) {
-            try {
+        if (fechasValidas(fechaInicio, fechaD)) {
+            if (fechaInicio != null && fechaD != null) {
+                try {
 
-                List<Cliente> clienteSs = cliente.obtenerClientesPorPeriodo(fechaInicio, fechaD);
-                for (Cliente clienteS : clienteSs) {
-                    System.out.println(clienteS);
+                    List<Cliente> clienteSs = cliente.obtenerClientesPorPeriodo(fechaInicio, fechaD);
+                    for (Cliente clienteS : clienteSs) {
+                        System.out.println(clienteS);
+                    }
+                    List<Cliente> clientesNormal = new ArrayList<>();
+                    frmListaDeCobros f = new frmListaDeCobros(clienteSs, clientesNormal);
+                    f.setVisible(true);
+                    this.dispose();
+                } catch (SQLException ex) {
+                    Logger.getLogger(frmPeriodos.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                List<Cliente> clientesNormal = new ArrayList<>();
-                frmListaDeCobros f = new frmListaDeCobros(clienteSs, clientesNormal);
-                f.setVisible(true);
-                this.dispose();
-            } catch (SQLException ex) {
-                Logger.getLogger(frmPeriodos.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_btnPeriodoActionPerformed
