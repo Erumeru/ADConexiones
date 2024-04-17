@@ -180,26 +180,35 @@ public class frmPeriodos extends javax.swing.JFrame {
         }
     }
 
+    // Método para obtener clientes por período y mostrar el formulario
+    private void obtenerClientesYMostrarFormulario(LocalDate fechaInicio, LocalDate fechaFin) {
+        try {
+            List<Cliente> clienteSs = cliente.obtenerClientesPorPeriodo(fechaInicio, fechaFin);
+
+            if (clienteSs.isEmpty()) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "No hay clientes con cobros pendientes en el período seleccionado.",
+                        "Sin clientes",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            } else {
+                List<Cliente> clientesNormal = new ArrayList<>();
+                frmListaDeCobros f = new frmListaDeCobros(clienteSs, clientesNormal);
+                f.setVisible(true);
+                this.dispose();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(frmPeriodos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     private void btnPeriodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPeriodoActionPerformed
         LocalDate fechaInicio = this.fechaInicio.getDate();
-        LocalDate fechaD = this.fechaFin.getDate();
+        LocalDate fechaFin = this.fechaFin.getDate();
 
-        if (fechasValidas(fechaInicio, fechaD)) {
-            if (fechaInicio != null && fechaD != null) {
-                try {
-
-                    List<Cliente> clienteSs = cliente.obtenerClientesPorPeriodo(fechaInicio, fechaD);
-                    for (Cliente clienteS : clienteSs) {
-                        System.out.println(clienteS);
-                    }
-                    List<Cliente> clientesNormal = new ArrayList<>();
-                    frmListaDeCobros f = new frmListaDeCobros(clienteSs, clientesNormal);
-                    f.setVisible(true);
-                    this.dispose();
-                } catch (SQLException ex) {
-                    Logger.getLogger(frmPeriodos.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
+        if (fechasValidas(fechaInicio, fechaFin)) {
+            obtenerClientesYMostrarFormulario(fechaInicio, fechaFin);
         }
     }//GEN-LAST:event_btnPeriodoActionPerformed
 
