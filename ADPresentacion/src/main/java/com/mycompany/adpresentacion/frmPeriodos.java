@@ -19,7 +19,9 @@ import java.util.logging.Logger;
  * @author hoshi
  */
 public class frmPeriodos extends javax.swing.JFrame {
+
     private ClienteDAO cliente;
+
     /**
      * Creates new form frmPeriodos
      */
@@ -162,29 +164,30 @@ public class frmPeriodos extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnPeriodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPeriodoActionPerformed
-       LocalDate fechaInicio = this.fechaInicio.getDate();
-       LocalDate fechaD = this.fechaFin.getDate(); 
-        
-        if (fechaInicio!=null&&fechaD!=null) {
-           try {  
-               
-               List<Cliente> clienteSs = cliente.obtenerClientesPorPeriodo(fechaInicio,fechaD);
-               for (Cliente clienteS : clienteSs) {
-                   System.out.println(clienteS);
-               }
-               List<Cliente> clientesNormal = new ArrayList<>();
-               frmListaDeCobros f = new frmListaDeCobros(clienteSs,clientesNormal);
-               f.setVisible(true);
-               this.dispose();
-           } catch (SQLException ex) {
-               Logger.getLogger(frmPeriodos.class.getName()).log(Level.SEVERE, null, ex);
-           }
+        LocalDate fechaInicio = this.fechaInicio.getDate();
+        LocalDate fechaD = this.fechaFin.getDate();
+
+        if (fechaInicio != null && fechaD != null) {
+            try {
+
+                List<Cliente> clienteSs = cliente.obtenerClientesPorPeriodo(fechaInicio, fechaD);
+                for (Cliente clienteS : clienteSs) {
+                    System.out.println(clienteS);
+                }
+                List<Cliente> clientesNormal = new ArrayList<>();
+                frmListaDeCobros f = new frmListaDeCobros(clienteSs, clientesNormal);
+                f.setVisible(true);
+                this.dispose();
+            } catch (SQLException ex) {
+                Logger.getLogger(frmPeriodos.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_btnPeriodoActionPerformed
 
     private void btnPeriodo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPeriodo1ActionPerformed
-     frmListaDeCobros f = new frmListaDeCobros();
-               f.setVisible(true);
+        this.dispose();
+        frmListaDeCobros f = new frmListaDeCobros();
+        f.setVisible(true);
     }//GEN-LAST:event_btnPeriodo1ActionPerformed
 
     /**
