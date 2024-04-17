@@ -76,16 +76,17 @@ public class frmListaDeCobros extends javax.swing.JFrame {
         tableCobros.repaint();
         List<Cliente> clientesAtrasados = new ArrayList<>();
         List<Cliente> clientesNormales = new ArrayList<>();
-        
+
         try {
             clientesAtrasados = cliente.obtenerClientesAtrasados();
             clientesNormales = cliente.obtenerClientesSemana();
         } catch (SQLException ex) {
             Logger.getLogger(frmListaDeCobros.class.getName()).log(Level.SEVERE, null, ex);
         }
-        llenarTabla(clientesAtrasados,clientesNormales);
+        llenarTabla(clientesAtrasados, clientesNormales);
     }
-    public frmListaDeCobros(List<Cliente> clientesAtrasados , List<Cliente> clientesNormales ) {
+
+    public frmListaDeCobros(List<Cliente> clientesAtrasados, List<Cliente> clientesNormales) {
         ConexionBD conexionBD = new ConexionBD("adconexiones");
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         dim = toolkit.getScreenSize();
@@ -98,13 +99,14 @@ public class frmListaDeCobros extends javax.swing.JFrame {
         jPanel1.repaint();
         jLabel1.repaint();
         crearTablas();
-        
+
         tableCobros.getTableHeader().setOpaque(false);
         tableCobros.getTableHeader().setBackground(new Color(233, 42, 42));
         tableCobros.getTableHeader().setForeground(new Color(0, 0, 0));
         tableCobros.repaint();
-        llenarTabla(clientesAtrasados,clientesNormales);
+        llenarTabla(clientesAtrasados, clientesNormales);
     }
+
     public void crearTablas() {
         DefaultTableModel model = new DefaultTableModel();
         DefaultTableModel mode2 = new DefaultTableModel();
@@ -126,7 +128,7 @@ public class frmListaDeCobros extends javax.swing.JFrame {
         tableCobrosAtrasados.setModel(mode2);
     }
 
-    public void llenarTabla(List<Cliente> clientesAtrasados , List<Cliente> clientesNormales ) {
+    public void llenarTabla(List<Cliente> clientesAtrasados, List<Cliente> clientesNormales) {
         DefaultTableModel model = (DefaultTableModel) tableCobros.getModel();
         DefaultTableModel modelAtrasados = (DefaultTableModel) tableCobrosAtrasados.getModel();
         model.setRowCount(0);
@@ -134,7 +136,7 @@ public class frmListaDeCobros extends javax.swing.JFrame {
         //Aqui en vez de Registro Prueba seria Cargo
         listaPDFA = new ArrayList<>();
         listaPDFN = new ArrayList<>();
-        
+
         for (Cliente clientes : clientesNormales) {
 
             List<ContratoServicio> contratos = clientes.getContratosServicio();
@@ -158,7 +160,7 @@ public class frmListaDeCobros extends javax.swing.JFrame {
                     0,
                     costo
                 });
-                
+
                 JasperReporte reporte = new JasperReporte();
                 reporte.setId(String.valueOf(clientes.getId()));
                 reporte.setNombre(clientes.getNombreCliente());
@@ -167,51 +169,52 @@ public class frmListaDeCobros extends javax.swing.JFrame {
                 reporte.setFecha(formatter.format(d));
                 reporte.setAtraso(String.valueOf(0));
                 reporte.setPago(String.valueOf(costo));
-                
+
                 listaPDFN.add(reporte);
-                
+
             }
         }
         for (Cliente clientes : clientesAtrasados) {
             System.out.println(clientes.getNombreCliente());
             List<ContratoServicio> contratos = clientes.getContratosServicio();
-              for (ContratoServicio contrato : contratos) {
+            for (ContratoServicio contrato : contratos) {
                 List<Cargo> cargos = contrato.getCargos();
-                if (cargos!=null||!cargos.isEmpty()) {
-                if(cargos.get(0)!=null){
-                float costo = 0;
-                Date d = cargos.get(0).getFecha();
-                for (Cargo cargo : cargos) {
-                    costo += cargo.getDeuda();
-                    if (d.before(cargo.getFecha())) {
-                        d = cargo.getFecha();
+                if (cargos != null || !cargos.isEmpty()) {
+                    if (cargos.get(0) != null) {
+                        float costo = 0;
+                        Date d = cargos.get(0).getFecha();
+                        for (Cargo cargo : cargos) {
+                            costo += cargo.getDeuda();
+                            if (d.before(cargo.getFecha())) {
+                                d = cargo.getFecha();
+                            }
+                        }
+                        long diferenciaMilisegundos = new Date().getTime() - d.getTime();
+                        long diferenciaDias = diferenciaMilisegundos / (24 * 60 * 60 * 1000);
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                        modelAtrasados.addRow(new Object[]{
+                            clientes.getId(),
+                            clientes.getNombreCliente(),
+                            clientes.getNumeroCliente() + " " + clientes.getColoniaCliente() + " " + clientes.getCalleCliente(),
+                            clientes.getTelefonoCliente(),
+                            formatter.format(d),
+                            diferenciaDias,
+                            costo
+                        });
+
+                        JasperReporte reporte = new JasperReporte();
+                        reporte.setId(String.valueOf(clientes.getId()));
+                        reporte.setNombre(clientes.getNombreCliente());
+                        reporte.setDireccion(clientes.getNumeroCliente() + " " + clientes.getColoniaCliente() + " " + clientes.getCalleCliente());
+                        reporte.setTelefono(clientes.getTelefonoCliente());
+                        reporte.setFecha(formatter.format(d));
+                        reporte.setAtraso(String.valueOf(diferenciaDias));
+                        reporte.setPago(String.valueOf(costo));
+
+                        listaPDFA.add(reporte);
+
                     }
                 }
-                long diferenciaMilisegundos = new Date().getTime() - d.getTime();
-                long diferenciaDias = diferenciaMilisegundos / (24 * 60 * 60 * 1000);
-                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                modelAtrasados.addRow(new Object[]{
-                    clientes.getId(),
-                    clientes.getNombreCliente(),
-                    clientes.getNumeroCliente() + " " + clientes.getColoniaCliente() + " " + clientes.getCalleCliente(),
-                    clientes.getTelefonoCliente(),
-                    formatter.format(d),
-                    diferenciaDias,
-                    costo
-                });
-                
-                JasperReporte reporte = new JasperReporte();
-                reporte.setId(String.valueOf(clientes.getId()));
-                reporte.setNombre(clientes.getNombreCliente());
-                reporte.setDireccion(clientes.getNumeroCliente() + " " + clientes.getColoniaCliente() + " " + clientes.getCalleCliente());
-                reporte.setTelefono(clientes.getTelefonoCliente());
-                reporte.setFecha(formatter.format(d));
-                reporte.setAtraso(String.valueOf(diferenciaDias));
-                reporte.setPago(String.valueOf(costo));
-                
-                listaPDFA.add(reporte);
-                
-                }}
             }
         }
         tableCobros.setModel(model);
@@ -430,90 +433,83 @@ public class frmListaDeCobros extends javax.swing.JFrame {
     }//GEN-LAST:event_btnGenerarPdfMouseExited
 
     private void btnGenerarPdfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarPdfActionPerformed
-        
-        List <JasperReporte> pdf = new ArrayList<>();
-        
+
+        List<JasperReporte> pdf = new ArrayList<>();
+
         int opcionN = JOptionPane.showConfirmDialog(null, "¿Está seguro de imprimir el pdf?", "Confirmar", JOptionPane.YES_NO_OPTION);
 
         if (opcionN == JOptionPane.YES_OPTION) {
 
-        // Muestra el cuadro de diálogo y obtiene la opción seleccionada por el usuario
-        String opcion = (String) JOptionPane.showInputDialog(
-                null, // Componente padre, en este caso ninguno
-                "Seleccione una opción:", // Mensaje a mostrar
-                "Seleccionar opción", // Título del cuadro de diálogo
-                JOptionPane.QUESTION_MESSAGE, // Tipo de mensaje
-                null, // Icono personalizado (en este caso ninguno)
-                new String[]{"Atrasados", "Normales"}, // Opciones a mostrar
-                "Atrasados"); // Opción por defecto seleccionada
+            // Muestra el cuadro de diálogo y obtiene la opción seleccionada por el usuario
+            String opcion = (String) JOptionPane.showInputDialog(
+                    null, // Componente padre, en este caso ninguno
+                    "Seleccione una opción:", // Mensaje a mostrar
+                    "Seleccionar opción", // Título del cuadro de diálogo
+                    JOptionPane.QUESTION_MESSAGE, // Tipo de mensaje
+                    null, // Icono personalizado (en este caso ninguno)
+                    new String[]{"Atrasados", "Normales"}, // Opciones a mostrar
+                    "Atrasados"); // Opción por defecto seleccionada
 
-        // Verifica la opción seleccionada por el usuario y muestra un mensaje correspondiente
-        if (opcion != null) {
-            
-            if(opcion.equalsIgnoreCase("Atrasados")){
-                pdf = listaPDFA;
-            }else{
-                pdf = listaPDFN;
+            // Verifica la opción seleccionada por el usuario y muestra un mensaje correspondiente
+            if (opcion != null) {
+
+                if (opcion.equalsIgnoreCase("Atrasados")) {
+                    pdf = listaPDFA;
+                } else {
+                    pdf = listaPDFN;
+                }
+
+            } else {
+                // Si el usuario cierra el cuadro de diálogo sin seleccionar una opción
+                JOptionPane.showMessageDialog(null, "No has seleccionado ninguna opción");
+                return;
             }
-            
-        } else {
-            // Si el usuario cierra el cuadro de diálogo sin seleccionar una opción
-            JOptionPane.showMessageDialog(null, "No has seleccionado ninguna opción");
-            return;
-        }
-        
-        if(pdf.isEmpty()){
-            JOptionPane.showMessageDialog(this, "La lista esta vacía");
-            return;
-        }
-       
+
+            if (pdf.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "La lista esta vacía");
+                return;
+            }
+
 //            List<JasperReporte> pdf = new ArrayList<JasperReporte>();
-            
-            
-            
-            
             try {
-                
+
                 Map parametro = new HashMap();
-                
+
                 LocalDateTime fechaHoraActual = LocalDateTime.now();
                 DateTimeFormatter formatEscrito = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy, hh:mm a");
                 String fechaHoraEscrita = fechaHoraActual.format(formatEscrito);
-                parametro.put("fecha_general",fechaHoraEscrita);
-                
-                parametro.put("razon", "Reporte General: "+opcion);
-                
+                parametro.put("fecha_general", fechaHoraEscrita);
+
+                parametro.put("razon", "Reporte General: " + opcion);
+
                 JRBeanCollectionDataSource beanColDataSource = new JRBeanCollectionDataSource(pdf);
                 System.out.println("hola");
-                 //Cargar el archivo JRXML del reporte
+                //Cargar el archivo JRXML del reporte
                 InputStream reportFile = getClass().getResourceAsStream("/reporte4.jrxml");
                 System.out.println("hola2");
-                
+
                 JasperReport jasperReport = JasperCompileManager.compileReport(reportFile);
                 System.out.println("hola3");
-                
-                 //Llenar el reporte con los datos
-                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,  parametro, beanColDataSource);
-                
-                
-                JasperViewer visu= new JasperViewer(jasperPrint, false);
+
+                //Llenar el reporte con los datos
+                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametro, beanColDataSource);
+
+                JasperViewer visu = new JasperViewer(jasperPrint, false);
                 visu.setVisible(true);
                 // Visualizar el reporte
                 JasperExportManager.exportReportToPdfFile(jasperPrint, "./reporte.pdf");
             } catch (Exception e) {
-                System.out.println(e);
+                JOptionPane.showMessageDialog(null, "Ha ocurrido un problema al generar el pdf\ncontacte a soporte");
             }
         }
-                                                    
 
-       
-       
+
     }//GEN-LAST:event_btnGenerarPdfActionPerformed
 
     private void btnPeriodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPeriodoActionPerformed
-       frmPeriodos f=new frmPeriodos();
-       f.setVisible(true);
-       this.dispose();
+        frmPeriodos f = new frmPeriodos();
+        f.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnPeriodoActionPerformed
 
     private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
@@ -524,9 +520,9 @@ public class frmListaDeCobros extends javax.swing.JFrame {
 
     private void btnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitActionPerformed
         // TODO add your handling code here:
-       frmPrincipal f=new frmPrincipal();
-       f.setVisible(true);
-       this.dispose();
+        frmPrincipal f = new frmPrincipal();
+        f.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnExitActionPerformed
 
     /**
