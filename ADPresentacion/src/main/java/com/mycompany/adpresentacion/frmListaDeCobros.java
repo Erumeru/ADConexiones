@@ -80,10 +80,13 @@ public class frmListaDeCobros extends javax.swing.JFrame {
         try {
             clientesAtrasados = cliente.obtenerClientesAtrasados();
             clientesNormales = cliente.obtenerClientesSemana();
+
+            llenarTabla(clientesAtrasados, clientesNormales);
         } catch (SQLException ex) {
             Logger.getLogger(frmListaDeCobros.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Ha ocurrido un error al cargar los clientes.\nConsulte a soporte");
+
         }
-        llenarTabla(clientesAtrasados, clientesNormales);
     }
 
     public frmListaDeCobros(List<Cliente> clientesAtrasados, List<Cliente> clientesNormales) {
