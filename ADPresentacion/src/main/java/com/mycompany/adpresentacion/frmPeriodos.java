@@ -183,9 +183,20 @@ public class frmPeriodos extends javax.swing.JFrame {
     // Método para obtener clientes por período y mostrar el formulario
     private void obtenerClientesYMostrarFormulario(LocalDate fechaInicio, LocalDate fechaFin) {
         try {
+            LocalDate fechaActual = LocalDate.now();
             List<Cliente> clienteSs = cliente.obtenerClientesPorPeriodo(fechaInicio, fechaFin);
-
-            if (clienteSs.isEmpty()) {
+             List<Cliente> clientesNormal = new ArrayList<>();
+            if (fechaActual.isBefore(fechaFin)) {
+                clientesNormal =cliente.obtenerClientesPorPeriodo(fechaActual, fechaFin);
+            }
+            for (Cliente cliente1 : clientesNormal) {
+                clienteSs.remove(cliente1);
+                System.out.println("N"+cliente1.getId());
+            }
+            for (Cliente clienteS : clienteSs) {
+                System.out.println("A"+clienteS.getId());
+            }
+            if (clienteSs.isEmpty()&& clientesNormal.isEmpty()) {
                 JOptionPane.showMessageDialog(
                         null,
                         "No hay clientes con cobros pendientes en el período seleccionado.",
@@ -193,7 +204,7 @@ public class frmPeriodos extends javax.swing.JFrame {
                         JOptionPane.INFORMATION_MESSAGE
                 );
             } else {
-                List<Cliente> clientesNormal = new ArrayList<>();
+               
                 frmListaDeCobros f = new frmListaDeCobros(clienteSs, clientesNormal);
                 f.setVisible(true);
                 this.dispose();

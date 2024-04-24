@@ -146,11 +146,13 @@ public class ClienteDAO implements IClienteDAO {
                     + "JOIN Cliente cliente ON contrato.cliente.id = cliente.id "
                     + "WHERE c.deuda > 0 "
                     + "AND c.fecha BETWEEN :fechaInicio AND :fechaFin";
-
+            
             Query query = conexionBD.getEM().createQuery(consulta);
+           
             query.setParameter("fechaInicio", java.sql.Date.valueOf(fechaInicio));
             query.setParameter("fechaFin", java.sql.Date.valueOf(fechaFin));
-
+            System.out.println(consulta);
+             System.out.println(java.sql.Date.valueOf(fechaInicio)+"AND "+java.sql.Date.valueOf(fechaFin));
             clientes = query.getResultList();
         } catch (Exception e) {
             e.printStackTrace();
