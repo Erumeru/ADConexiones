@@ -63,11 +63,11 @@ public class Prueba {
         cargo.generarCargo(new Cargo(300F, new Date(124, 3, 11), contrato.obtenerContrato(cliente.obtenerPersona(3L))));
         cargo.generarCargo(new Cargo(300F, new Date(124, 3, 12), contrato.obtenerContrato(cliente.obtenerPersona(4L))));
         cargo.generarCargo(new Cargo(300F, new Date(124, 3, 13), contrato.obtenerContrato(cliente.obtenerPersona(5L))));
-        cargo.generarCargo(new Cargo(300F, new Date(124, 3, 16), contrato.obtenerContrato(cliente.obtenerPersona(6L))));
+        cargo.generarCargo(new Cargo(900F, new Date(124, 3, 16), contrato.obtenerContrato(cliente.obtenerPersona(6L))));
         cargo.generarCargo(new Cargo(300F, new Date(124, 2, 13), contrato.obtenerContrato(cliente.obtenerPersona(7L))));
-        cargo.generarCargo(new Cargo(300F, new Date(124, 2, 13), contrato.obtenerContrato(cliente.obtenerPersona(8L))));
+        cargo.generarCargo(new Cargo(800F, new Date(124, 2, 13), contrato.obtenerContrato(cliente.obtenerPersona(8L))));
         cargo.generarCargo(new Cargo(300F, new Date(124, 2, 15), contrato.obtenerContrato(cliente.obtenerPersona(9L))));
-        cargo.generarCargo(new Cargo(300F, new Date(124, 2, 15), contrato.obtenerContrato(cliente.obtenerPersona(10L))));
+        cargo.generarCargo(new Cargo(700F, new Date(124, 2, 15), contrato.obtenerContrato(cliente.obtenerPersona(10L))));
         cargo.generarCargo(new Cargo(300F, new Date(100, 2, 11), contrato.obtenerContrato(cliente.obtenerPersona(11L))));
 
         //AGREGAR PAGO

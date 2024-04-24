@@ -21,6 +21,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -131,6 +133,26 @@ public class frmListaDeCobros extends javax.swing.JFrame {
         tableCobrosAtrasados.setModel(mode2);
     }
 
+    // Define un comparador para ordenar los clientes por la deuda total de sus contratos
+Comparator<Cliente> comparadorDeuda = new Comparator<Cliente>() {
+    @Override
+    public int compare(Cliente cliente1, Cliente cliente2) {
+        // Calcula la deuda total de cada cliente sumando las deudas de todos sus contratos
+        float deudaCliente1 = (float) cliente1.getContratosServicio().stream()
+                .flatMap(contrato -> contrato.getCargos().stream())
+                .mapToDouble(Cargo::getDeuda)
+                .sum();
+
+        float deudaCliente2 = (float) cliente2.getContratosServicio().stream()
+                .flatMap(contrato -> contrato.getCargos().stream())
+                .mapToDouble(Cargo::getDeuda)
+                .sum();
+
+        // Compara las deudas y retorna el resultado
+        return Float.compare(deudaCliente2, deudaCliente1); // Orden descendente (mayor deuda primero)
+    }
+};
+
     public void llenarTabla(List<Cliente> clientesAtrasados, List<Cliente> clientesNormales) {
         DefaultTableModel model = (DefaultTableModel) tableCobros.getModel();
         DefaultTableModel modelAtrasados = (DefaultTableModel) tableCobrosAtrasados.getModel();
@@ -177,7 +199,9 @@ public class frmListaDeCobros extends javax.swing.JFrame {
 
             }
         }
+          Collections.sort(clientesAtrasados, comparadorDeuda);
         for (Cliente clientes : clientesAtrasados) {
+          
             System.out.println(clientes.getNombreCliente());
             List<ContratoServicio> contratos = clientes.getContratosServicio();
             for (ContratoServicio contrato : contratos) {
