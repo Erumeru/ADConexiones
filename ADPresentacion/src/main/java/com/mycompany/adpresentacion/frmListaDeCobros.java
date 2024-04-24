@@ -134,24 +134,24 @@ public class frmListaDeCobros extends javax.swing.JFrame {
     }
 
     // Define un comparador para ordenar los clientes por la deuda total de sus contratos
-Comparator<Cliente> comparadorDeuda = new Comparator<Cliente>() {
-    @Override
-    public int compare(Cliente cliente1, Cliente cliente2) {
-        // Calcula la deuda total de cada cliente sumando las deudas de todos sus contratos
-        float deudaCliente1 = (float) cliente1.getContratosServicio().stream()
-                .flatMap(contrato -> contrato.getCargos().stream())
-                .mapToDouble(Cargo::getDeuda)
-                .sum();
+    Comparator<Cliente> comparadorDeuda = new Comparator<Cliente>() {
+        @Override
+        public int compare(Cliente cliente1, Cliente cliente2) {
+            // Calcula la deuda total de cada cliente sumando las deudas de todos sus contratos
+            float deudaCliente1 = (float) cliente1.getContratosServicio().stream()
+                    .flatMap(contrato -> contrato.getCargos().stream())
+                    .mapToDouble(Cargo::getDeuda)
+                    .sum();
 
-        float deudaCliente2 = (float) cliente2.getContratosServicio().stream()
-                .flatMap(contrato -> contrato.getCargos().stream())
-                .mapToDouble(Cargo::getDeuda)
-                .sum();
+            float deudaCliente2 = (float) cliente2.getContratosServicio().stream()
+                    .flatMap(contrato -> contrato.getCargos().stream())
+                    .mapToDouble(Cargo::getDeuda)
+                    .sum();
 
-        // Compara las deudas y retorna el resultado
-        return Float.compare(deudaCliente2, deudaCliente1); // Orden descendente (mayor deuda primero)
-    }
-};
+            // Compara las deudas y retorna el resultado
+            return Float.compare(deudaCliente2, deudaCliente1); // Orden descendente (mayor deuda primero)
+        }
+    };
 
     public void llenarTabla(List<Cliente> clientesAtrasados, List<Cliente> clientesNormales) {
         DefaultTableModel model = (DefaultTableModel) tableCobros.getModel();
@@ -161,7 +161,8 @@ Comparator<Cliente> comparadorDeuda = new Comparator<Cliente>() {
         //Aqui en vez de Registro Prueba seria Cargo
         listaPDFA = new ArrayList<>();
         listaPDFN = new ArrayList<>();
-
+        
+        Collections.sort(clientesNormales, comparadorDeuda);
         for (Cliente clientes : clientesNormales) {
 
             List<ContratoServicio> contratos = clientes.getContratosServicio();
@@ -199,9 +200,9 @@ Comparator<Cliente> comparadorDeuda = new Comparator<Cliente>() {
 
             }
         }
-          Collections.sort(clientesAtrasados, comparadorDeuda);
+        Collections.sort(clientesAtrasados, comparadorDeuda);
         for (Cliente clientes : clientesAtrasados) {
-          
+
             System.out.println(clientes.getNombreCliente());
             List<ContratoServicio> contratos = clientes.getContratosServicio();
             for (ContratoServicio contrato : contratos) {
