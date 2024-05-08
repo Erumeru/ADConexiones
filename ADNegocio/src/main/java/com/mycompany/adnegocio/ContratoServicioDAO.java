@@ -9,6 +9,8 @@ import com.itson.proyecto2_233410_233023.dominio.ContratoServicio;
 import com.itson.proyecto2_233410_233023.implementaciones.PersistenciaException;
 import com.itson.proyecto2_233410_233023.interfaces.IConexionBD;
 import interfaces.IContratoServicio;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.NoResultException;
 
 /**
@@ -57,6 +59,30 @@ public class ContratoServicioDAO implements IContratoServicio {
         } finally {
             conexionBD.getEM().clear();
         }
+    }
+
+    @Override
+    public List<ContratoServicio> obtenerContratos(Cliente cliente) throws Exception {
+        List<ContratoServicio> contratos = new ArrayList<>();
+
+        try {
+            // Obtener el ID del cliente
+            Long clienteId = cliente.getId();
+
+            // Buscar los contratos asociados al cliente por su ID
+            contratos = conexionBD.getEM()
+                    .createQuery("SELECT c FROM ContratoServicio c WHERE c.cliente.id = :clienteId", ContratoServicio.class)
+                    .setParameter("clienteId", clienteId)
+                    .getResultList();
+        } catch (NoResultException ex) {
+            // No se encontraron contratos para ese cliente
+        } catch (Exception ex) {
+            throw new PersistenciaException("No se pudo realizar la búsqueda de los contratos.");
+        } finally {
+            conexionBD.getEM().clear();
+        }
+
+        return contratos;
     }
 
     @Override

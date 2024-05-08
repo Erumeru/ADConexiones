@@ -189,13 +189,6 @@ public class frmPeriodos extends javax.swing.JFrame {
             if (fechaActual.isBefore(fechaFin)) {
                 clientesNormal =cliente.obtenerClientesPorPeriodo(fechaActual, fechaFin);
             }
-            for (Cliente cliente1 : clientesNormal) {
-                clienteSs.remove(cliente1);
-                System.out.println("N"+cliente1.getId());
-            }
-            for (Cliente clienteS : clienteSs) {
-                System.out.println("A"+clienteS.getId());
-            }
             if (clienteSs.isEmpty()&& clientesNormal.isEmpty()) {
                 JOptionPane.showMessageDialog(
                         null,

@@ -6,11 +6,7 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-<<<<<<< Updated upstream
-@Generated(value="EclipseLink-2.7.7.v20200504-rNA", date="2024-04-09T23:41:20")
-=======
-@Generated(value="EclipseLink-2.7.7.v20200504-rNA", date="2024-04-10T16:48:38")
->>>>>>> Stashed changes
+@Generated(value="EclipseLink-2.7.7.v20200504-rNA", date="2024-05-08T13:31:13")
 @StaticMetamodel(Inventario.class)
 public class Inventario_ { 
 

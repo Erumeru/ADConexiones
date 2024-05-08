@@ -5,6 +5,7 @@
 package interfaces;
 
 import com.itson.proyecto2_233410_233023.dominio.Plan;
+import java.util.List;
 
 /**
  *
@@ -12,4 +13,5 @@ import com.itson.proyecto2_233410_233023.dominio.Plan;
  */
 public interface IPlanDAO {
     Boolean insertarPlan(Plan plan) throws Exception;
+     public List<Plan> obtenerTodos() throws Exception;
 }

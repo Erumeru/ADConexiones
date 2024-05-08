@@ -66,7 +66,7 @@ public class ClienteDAO implements IClienteDAO {
             conexionBD.getEM().clear();
         }
     }
-
+    
     @Override
     public Cliente obtenerPersona(Long id) {
         try {
@@ -82,7 +82,23 @@ public class ClienteDAO implements IClienteDAO {
             conexionBD.getEM().clear();
         }
     }
+    @Override
+public List<Cliente> obtenerClientes() throws SQLException {
+    List<Cliente> clientes = new ArrayList<>();
 
+    try {
+        String consulta = "SELECT c FROM Cliente c";
+        Query query = conexionBD.getEM().createQuery(consulta);
+        clientes = query.getResultList();
+    } catch (NoResultException e) {
+        // No se encontraron resultados
+    } catch (Exception e) {
+        e.printStackTrace();
+        throw new PersistenceException("Error al obtener todos los clientes: " + e.getMessage());
+    }
+
+    return clientes;
+}
     @Override
     public List<Cliente> obtenerClientesAtrasados() throws SQLException {
         List<Cliente> clientes = new ArrayList<>();

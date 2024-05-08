@@ -24,6 +24,7 @@ public interface IClienteDAO {
     boolean insercionMasivaPersonas();
     
     public Cliente obtenerPersona(Long id);
+    public List<Cliente> obtenerClientes() throws SQLException;
     
     public List<Cliente> obtenerClientesAtrasados() throws SQLException;
 

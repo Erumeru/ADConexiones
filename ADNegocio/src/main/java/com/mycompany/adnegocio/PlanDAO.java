@@ -8,6 +8,10 @@ import com.itson.proyecto2_233410_233023.dominio.Plan;
 import com.itson.proyecto2_233410_233023.implementaciones.PersistenciaException;
 import com.itson.proyecto2_233410_233023.interfaces.IConexionBD;
 import interfaces.IPlanDAO;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
 
 /**
  *
@@ -41,6 +45,23 @@ public class PlanDAO implements IPlanDAO {
             throw new PersistenciaException("No se pudo agregar este plan");
         } finally {
             conexionBD.getEM().clear();
+        }
+    }
+    @Override
+    public List<Plan> obtenerTodos() throws Exception {
+        try {
+            EntityManager entityManager = conexionBD.getEM();
+
+            // Crear y ejecutar la consulta para obtener todos los planes
+            Query query = entityManager.createQuery("SELECT p FROM Plan p");
+            List<Plan> planes = query.getResultList();
+            
+            return planes;
+        } catch (NoResultException ex) {
+            // Manejar el caso cuando no se encuentran resultados
+            return null;
+        } catch (Exception ex) {
+            throw new PersistenciaException("Error al obtener todos los planes: " + ex.getMessage());
         }
     }
 

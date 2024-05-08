@@ -64,4 +64,10 @@ public class Plan {
     public void setContratosServicio(List<ContratoServicio> contratosServicio) {
         this.contratosServicio = contratosServicio;
     }
+
+    @Override
+    public String toString() {
+        return "Velocidad: "+getMegas()+" Costo: "+getCostoMensualidad();
+       }
+    
 }

@@ -11,6 +11,7 @@ package com.mycompany.adpresentacion;
 public class ADPresentacion {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        frmPrincipal f = new frmPrincipal();
+        f.setVisible(true);
     }
 }
