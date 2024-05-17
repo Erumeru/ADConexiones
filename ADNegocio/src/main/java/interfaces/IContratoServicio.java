@@ -20,4 +20,5 @@ public interface IContratoServicio {
     public List<ContratoServicio> obtenerContrato() throws SQLException;
     public List<ContratoServicio> obtenerContratos(Cliente cliente)throws Exception;
     public ContratoServicio obtenerContrato(Long contratoId) throws Exception ;
+    public Boolean actualizarContrato(ContratoServicio contrato) throws Exception;
 }

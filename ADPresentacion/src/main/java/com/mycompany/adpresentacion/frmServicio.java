@@ -18,7 +18,9 @@ import interfaces.ICargoDAO;
 import interfaces.IClienteDAO;
 import interfaces.IContratoServicio;
 import interfaces.IPlanDAO;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -30,30 +32,34 @@ import javax.swing.JOptionPane;
  * @author diego
  */
 public class frmServicio extends javax.swing.JFrame {
+
     private IClienteDAO clientedao;
     private IContratoServicio contratoDAO;
     private ICargoDAO cargoDAO;
     private IPlanDAO PlanDAO;
     private Long idCliente;
+
     /**
      * Creates new form frmServicio
      */
     public frmServicio() {
         initComponents();
     }
+
     public frmServicio(Long cliente) {
         initComponents();
         ConexionBD conexionBD = new ConexionBD("adconexiones");
         clientedao = new ClienteDAO(conexionBD);
-         contratoDAO = new ContratoServicioDAO(conexionBD);
+        contratoDAO = new ContratoServicioDAO(conexionBD);
         PlanDAO = new PlanDAO(conexionBD);
         cargoDAO = new CargoDAO(conexionBD);
-        this.idCliente=cliente;
+        this.idCliente = cliente;
         rellenarCampos(cliente);
-        
-    }       
-    public void rellenarCampos(Long id){
-       Cliente cliente = clientedao.obtenerPersona(id);
+
+    }
+
+    public void rellenarCampos(Long id) {
+        Cliente cliente = clientedao.obtenerPersona(id);
         txtIdCliente.setText(String.valueOf(id));
         txtNombreCliente.setText(cliente.getNombreCliente());
         try {
@@ -61,35 +67,58 @@ public class frmServicio extends javax.swing.JFrame {
             for (Plan plan1 : plan) {
                 cmbPlan.addItem(plan1);
             }
-            
+
         } catch (Exception ex) {
             Logger.getLogger(frmServicio.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public boolean registararContrato(){
+
+    public boolean registararContrato() {
         Cliente cliente = clientedao.obtenerPersona(idCliente);
         LocalDate fechaInicio = LocalDate.now();
-        Plan p=  (Plan)cmbPlan.getSelectedItem();
+        Plan p = (Plan) cmbPlan.getSelectedItem();
         ContratoServicio contrato = new ContratoServicio(p.getCostoMensualidad(), fechaInicio.getDayOfMonth(), p, cliente);
-        
-        try {   
+
+        try {
             contratoDAO.crearContrato(contrato);
-            
+
         } catch (Exception ex) {
             Logger.getLogger(frmServicio.class.getName()).log(Level.SEVERE, null, ex);
         }
-        try {   
+        try {
             LocalDate fechaHoy = LocalDate.now();
-            ContratoServicio contratoCliente =contratoDAO.obtenerContrato(cliente);
-            Cargo cargo = new Cargo(contrato.getMontoPagar(), new Date(), contrato);
-            cargoDAO.generarCargo(cargo);
+            ContratoServicio contratoCliente = contratoDAO.obtenerContrato(cliente);
+            Date d = new Date();
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(d);
+            calendar.add(Calendar.MONTH, 1); // Agrega un mes
+
+            // Obtener la nueva fecha
+            Date newDate = calendar.getTime();
+            Cargo cargo = new Cargo(contratoCliente.getMontoPagar(), newDate, contratoCliente);
+            List<Cargo> cargos = contratoCliente.getCargos();
+            cargos.add(cargo);
+            contratoCliente.setCargos(cargos);
+            contratoDAO.actualizarContrato(contratoCliente);
         } catch (Exception ex) {
             Logger.getLogger(frmServicio.class.getName()).log(Level.SEVERE, null, ex);
         }
-        JOptionPane.showMessageDialog(rootPane, "Total de Pagar : "+contrato.getMontoPagar()+"\n Fecha a Pagar: "+new Date());
-        
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        Date d = new Date();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(d);
+        calendar.add(Calendar.MONTH, 1); // Agrega un mes
+
+        // Obtener la nueva fecha
+        Date newDate = calendar.getTime();
+
+        JOptionPane.showMessageDialog(rootPane, "Total de Pagar : " + contrato.getMontoPagar() + "\n Fecha a Pagar: " + formatter.format(newDate));
+
         return true;
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -275,8 +304,11 @@ public class frmServicio extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnPeriodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPeriodoActionPerformed
-        
-        registararContrato();        
+
+        registararContrato();
+        this.dispose();
+        frmClienteServicio otraPantalla = new frmClienteServicio(idCliente);
+        otraPantalla.setVisible(true);
     }//GEN-LAST:event_btnPeriodoActionPerformed
 
     private void btnPeriodo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPeriodo1ActionPerformed

@@ -4,7 +4,6 @@
  */
 package com.mycompany.adpresentacion;
 
-<<<<<<< HEAD
 import com.itson.proyecto2_233410_233023.dominio.Cargo;
 import com.itson.proyecto2_233410_233023.dominio.Cliente;
 import com.itson.proyecto2_233410_233023.dominio.ContratoServicio;
@@ -26,11 +25,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import reportes.JasperReporte;
-=======
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.JButton;
->>>>>>> 4a52886f5ec7732e3e7e560575bb9749400e2370
 import utils.JButtonTableCellRenderer;
 
 /**
@@ -39,22 +33,14 @@ import utils.JButtonTableCellRenderer;
  */
 public class frmRegistrarMensualidad extends javax.swing.JFrame {
 
-<<<<<<< HEAD
     JButtonTableCellRenderer buttonRenderer = new JButtonTableCellRenderer();
     /**
      * btn
      */
     private IClienteDAO clientedao;
     private IContratoServicio contratoDAO;
-    private Long idSeleccionado=0L;
-=======
-    
-     JButtonTableCellRenderer buttonRenderer = new JButtonTableCellRenderer();
-    /**
-     * btn
-     */
-    JButton btn = new JButton("Seleccion");
->>>>>>> 4a52886f5ec7732e3e7e560575bb9749400e2370
+    private Long idSeleccionado = 0L;
+
     /**
      * lista de resultados
      */
@@ -64,27 +50,26 @@ public class frmRegistrarMensualidad extends javax.swing.JFrame {
      */
     public frmRegistrarMensualidad() {
         initComponents();
-<<<<<<< HEAD
 
         ConexionBD conexionBD = new ConexionBD("adconexiones");
         clientedao = new ClienteDAO(conexionBD);
         contratoDAO = new ContratoServicioDAO(conexionBD);
         crearTablas();
         rellnarTablas();
-        
+
         tblClienteCargos.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            if (!e.getValueIsAdjusting()) {
-                int filaSeleccionada = tblClienteCargos.getSelectedRow();
-                if (filaSeleccionada != -1) {
-                     idSeleccionado = (Long) tblClienteCargos.getValueAt(filaSeleccionada, 0);
-                }else{
-                    idSeleccionado=0L;
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    int filaSeleccionada = tblClienteCargos.getSelectedRow();
+                    if (filaSeleccionada != -1) {
+                        idSeleccionado = (Long) tblClienteCargos.getValueAt(filaSeleccionada, 0);
+                    } else {
+                        idSeleccionado = 0L;
+                    }
                 }
             }
-        }
-    });
+        });
     }
 
     /**
@@ -92,24 +77,12 @@ public class frmRegistrarMensualidad extends javax.swing.JFrame {
      */
     private void mostrarPantallaFrmPersona() {
         // Persona persona = new Persona();
-=======
-        
-         tblResultados.setDefaultRenderer(Object.class, buttonRenderer);
-    }
-    
-      /**
-     * Metodo que se encarga de mostrar la pantalla de persona
-     */
-    private void mostrarPantallaFrmPersona() {
-       // Persona persona = new Persona();
->>>>>>> 4a52886f5ec7732e3e7e560575bb9749400e2370
         this.setVisible(false);
         //FrmPersona frmPersona = new FrmPersona(persona);
         //frmPersona.setVisible(true);
         this.dispose();
     }
 
-<<<<<<< HEAD
     public void crearTablas() {
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("ID");
@@ -125,36 +98,45 @@ public class frmRegistrarMensualidad extends javax.swing.JFrame {
             DefaultTableModel model = (DefaultTableModel) tblClienteCargos.getModel();
             // Eliminar filas existentes en la tabla
             model.setRowCount(0);
-            
-            List<Cliente> contratos = clientedao.obtenerClientesContrato();
-             for (Cliente servicio : contratos) {
-                 
-                 ContratoServicio c = servicio.getContratosServicio().get(0);
-                 Date d = c.getCargos().get(0).getFecha();
-                 long diferenciaMilisegundos = new Date().getTime() - d.getTime();
-                 long diferenciaDias = diferenciaMilisegundos / (24 * 60 * 60 * 1000);
-                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                 if (diferenciaDias<0) {
-                     diferenciaDias=0;
-                 }
+
+            List<Cliente> contratos = clientedao.obtenerClientesContratoCargos();
+            for (Cliente servicio : contratos) {
+                System.out.println(servicio.getContratosServicio().get(0).getId()+"idContrato");
+                if (!servicio.getContratosServicio().get(0).getCargos().isEmpty()) {
+                    
+                
+                ContratoServicio c = servicio.getContratosServicio().get(0);
+                Date d = c.getCargos().get(0).getFecha();
+                Cargo cargo = c.getCargos().get(0);
+                long diferenciaMilisegundos = new Date().getTime() - d.getTime();
+                long diferenciaDias = diferenciaMilisegundos / (24 * 60 * 60 * 1000);
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                if (diferenciaDias < 0) {
+                    diferenciaDias = 0;
+                }
                 Object[] rowData = {
                     servicio.getId(),
                     servicio.getNombreCliente(),
-                    c.getMontoPagar(),
+                    cargo.getDeuda(),
                     formatter.format(d),
                     diferenciaDias
                 };
+                if (cargo.getDeuda() == 0) {
+                    Object[] rowData2 = {
+                        servicio.getId(),
+                        servicio.getNombreCliente(),
+                        "Sin Cargos",};
+                    rowData = rowData2;
+                }
+
                 model.addRow(rowData);
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(frmRegistrarMensualidad.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    
-
-=======
->>>>>>> 4a52886f5ec7732e3e7e560575bb9749400e2370
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -169,22 +151,12 @@ public class frmRegistrarMensualidad extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-<<<<<<< HEAD
         tblClienteCargos = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         btnMensualidad = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
-=======
-        tblResultados = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setBackground(new java.awt.Color(255, 255, 255));
-        setMaximumSize(new java.awt.Dimension(32767, 32767));
-        setPreferredSize(new java.awt.Dimension(1250, 731));
->>>>>>> 4a52886f5ec7732e3e7e560575bb9749400e2370
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setPreferredSize(new java.awt.Dimension(1250, 731));
@@ -207,11 +179,7 @@ public class frmRegistrarMensualidad extends javax.swing.JFrame {
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo.png"))); // NOI18N
 
-<<<<<<< HEAD
         tblClienteCargos.setModel(new javax.swing.table.DefaultTableModel(
-=======
-        tblResultados.setModel(new javax.swing.table.DefaultTableModel(
->>>>>>> 4a52886f5ec7732e3e7e560575bb9749400e2370
             new Object [][] {
 
             },
@@ -227,23 +195,15 @@ public class frmRegistrarMensualidad extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-<<<<<<< HEAD
         tblClienteCargos.setColumnSelectionAllowed(true);
+        tblClienteCargos.setRowHeight(40);
+        tblClienteCargos.getTableHeader().setReorderingAllowed(false);
         tblClienteCargos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblClienteCargosMouseClicked(evt);
             }
         });
         jScrollPane2.setViewportView(tblClienteCargos);
-=======
-        tblResultados.setColumnSelectionAllowed(true);
-        tblResultados.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tblResultadosMouseClicked(evt);
-            }
-        });
-        jScrollPane2.setViewportView(tblResultados);
->>>>>>> 4a52886f5ec7732e3e7e560575bb9749400e2370
 
         jButton1.setBackground(new java.awt.Color(235, 168, 23));
         jButton1.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
@@ -254,7 +214,6 @@ public class frmRegistrarMensualidad extends javax.swing.JFrame {
             }
         });
 
-<<<<<<< HEAD
         btnMensualidad.setBackground(new java.awt.Color(235, 168, 23));
         btnMensualidad.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         btnMensualidad.setText("Ver Mensualidad");
@@ -264,8 +223,6 @@ public class frmRegistrarMensualidad extends javax.swing.JFrame {
             }
         });
 
-=======
->>>>>>> 4a52886f5ec7732e3e7e560575bb9749400e2370
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -279,7 +236,6 @@ public class frmRegistrarMensualidad extends javax.swing.JFrame {
                         .addComponent(jLabel1))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(392, 392, 392)
-<<<<<<< HEAD
                         .addComponent(txtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 458, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(133, 133, 133)
@@ -291,19 +247,6 @@ public class frmRegistrarMensualidad extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnMensualidad, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(245, 245, 245))
-=======
-                        .addComponent(txtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 458, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(400, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 881, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(174, 174, 174))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(53, 53, 53))))
->>>>>>> 4a52886f5ec7732e3e7e560575bb9749400e2370
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -317,7 +260,6 @@ public class frmRegistrarMensualidad extends javax.swing.JFrame {
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-<<<<<<< HEAD
                 .addGap(41, 41, 41)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
                 .addGap(46, 46, 46)
@@ -325,13 +267,6 @@ public class frmRegistrarMensualidad extends javax.swing.JFrame {
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnMensualidad, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(88, 88, 88))
-=======
-                .addGap(55, 55, 55)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
-                .addGap(79, 79, 79)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41))
->>>>>>> 4a52886f5ec7732e3e7e560575bb9749400e2370
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -363,38 +298,9 @@ public class frmRegistrarMensualidad extends javax.swing.JFrame {
         //buscarPersonas();
     }//GEN-LAST:event_txtBusquedaKeyReleased
 
-<<<<<<< HEAD
     private void tblClienteCargosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblClienteCargosMouseClicked
-        
+
     }//GEN-LAST:event_tblClienteCargosMouseClicked
-=======
-    private void tblResultadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblResultadosMouseClicked
-        // TODO add your handling code here:
-        int columna;
-        int row;
-        //        int column = tblResultados.getColumnModel().getColumnIndexAtX(evt.getX());
-        //        int row = evt.getY()/tblResultados.getRowHeight();
-        columna = tblResultados.getColumnModel().getColumnIndexAtX(evt.getX());
-        row = evt.getY() / tblResultados.getRowHeight();
-
-        if (columna <= tblResultados.getColumnCount() && columna >= 0 && row <= tblResultados.getRowCount() && row >= 0) {
-            Object objeto = tblResultados.getValueAt(row, columna);
-            if (objeto instanceof JButton) {
-                ((JButton) objeto).doClick();
-                JButton boton = (JButton) objeto;
-                if (boton.equals(btn)) {
-                    this.setVisible(false);
-                    frmDetalleCliente f= new frmDetalleCliente();
-                    f.setVisible(true);
-                    //FrmPersona persona = new FrmPersona(resultados.get(row));
-                    //persona.setVisible(true);
-                    this.dispose();
-
-                }
-            }
-        }
-    }//GEN-LAST:event_tblResultadosMouseClicked
->>>>>>> 4a52886f5ec7732e3e7e560575bb9749400e2370
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
@@ -403,20 +309,24 @@ public class frmRegistrarMensualidad extends javax.swing.JFrame {
         f.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
-<<<<<<< HEAD
     private void btnMensualidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMensualidadActionPerformed
-        try {
-            ContratoServicio s = contratoDAO.obtenerContrato(idSeleccionado);  
-            frmDetalleCliente   f=   new frmDetalleCliente(s);
-            this.dispose();
-            f.setVisible(true);
-        } catch (Exception ex) {
-            Logger.getLogger(frmRegistrarMensualidad.class.getName()).log(Level.SEVERE, null, ex);
+        if (idSeleccionado != null && idSeleccionado != 0) {
+            try {
+                ContratoServicio s = contratoDAO.obtenerContrato(idSeleccionado);
+                frmDetalleCliente f = new frmDetalleCliente(s);
+                this.dispose();
+                f.setVisible(true);
+
+            } catch (Exception ex) {
+                Logger.getLogger(frmRegistrarMensualidad.class
+                        .getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            // Manejar el caso cuando no se ha seleccionado ninguna fila
+            JOptionPane.showMessageDialog(this, "Por favor, selecciona una fila primero.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnMensualidadActionPerformed
 
-=======
->>>>>>> 4a52886f5ec7732e3e7e560575bb9749400e2370
     /**
      * @param args the command line arguments
      */
@@ -431,16 +341,24 @@ public class frmRegistrarMensualidad extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(frmRegistrarMensualidad.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmRegistrarMensualidad.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(frmRegistrarMensualidad.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmRegistrarMensualidad.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(frmRegistrarMensualidad.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmRegistrarMensualidad.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(frmRegistrarMensualidad.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmRegistrarMensualidad.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -453,20 +371,13 @@ public class frmRegistrarMensualidad extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-<<<<<<< HEAD
     private javax.swing.JButton btnMensualidad;
-=======
->>>>>>> 4a52886f5ec7732e3e7e560575bb9749400e2370
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
-<<<<<<< HEAD
     private javax.swing.JTable tblClienteCargos;
-=======
-    private javax.swing.JTable tblResultados;
->>>>>>> 4a52886f5ec7732e3e7e560575bb9749400e2370
     private javax.swing.JTextField txtBusqueda;
     // End of variables declaration//GEN-END:variables
 }

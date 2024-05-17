@@ -29,7 +29,7 @@ public interface IClienteDAO {
     public List<Cliente> obtenerClientesAtrasados() throws SQLException;
 
     public List<Cliente> obtenerClientesSemana() throws SQLException;
-    
+    public List<Cliente> obtenerClientesContratoCargos() throws SQLException;
     public List<Cliente> obtenerClientesPorPeriodo(LocalDate fechaInicio, LocalDate fechaFin) throws SQLException;
 
 }

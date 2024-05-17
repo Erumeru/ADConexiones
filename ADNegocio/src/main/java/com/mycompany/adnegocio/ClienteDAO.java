@@ -115,6 +115,27 @@ public class ClienteDAO implements IClienteDAO {
 
         return clientes;
     }
+    @Override
+public List<Cliente> obtenerClientesContratoCargos() throws SQLException {
+    List<Cliente> clientes = new ArrayList<>();
+
+    try {
+        String consulta = "SELECT DISTINCT cliente " +
+                          "FROM ContratoServicio contrato " +
+                          "JOIN contrato.cliente cliente " +
+                          "JOIN contrato.cargos cargo";
+        Query query = conexionBD.getEM().createQuery(consulta);
+        clientes = query.getResultList();
+    } catch (NoResultException e) {
+        // No se encontraron resultados
+    } catch (Exception e) {
+        e.printStackTrace();
+        throw new PersistenceException("Error al obtener todos los clientes con contratos y cargos: " + e.getMessage());
+    }
+
+    return clientes;
+}
+
 
     @Override
     public List<Cliente> obtenerClientes() throws SQLException {

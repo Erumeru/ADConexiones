@@ -12,6 +12,8 @@ import interfaces.IContratoServicio;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
@@ -36,6 +38,7 @@ public class ContratoServicioDAO implements IContratoServicio {
     public ContratoServicioDAO(IConexionBD conexionBD) {
         this.conexionBD = conexionBD;
     }
+
     @Override
     public List<ContratoServicio> obtenerContrato() throws SQLException {
         List<ContratoServicio> contratoServicio = new ArrayList<>();
@@ -53,7 +56,7 @@ public class ContratoServicioDAO implements IContratoServicio {
 
         return contratoServicio;
     }
-    
+
     @Override
     public ContratoServicio obtenerContrato(Cliente cliente) throws Exception {
         try {
@@ -80,26 +83,26 @@ public class ContratoServicioDAO implements IContratoServicio {
             conexionBD.getEM().clear();
         }
     }
+
     @Override
-public ContratoServicio obtenerContrato(Long contratoId) throws Exception {
-    try {
-        // Buscar el contrato por su ID
-        ContratoServicio contratoObtenido = conexionBD.getEM()
-                .find(ContratoServicio.class, contratoId);
+    public ContratoServicio obtenerContrato(Long contratoId) throws Exception {
+        try {
+            // Buscar el contrato por su ID
+            ContratoServicio contratoObtenido = conexionBD.getEM()
+                    .find(ContratoServicio.class, contratoId);
 
-        // Si no se encuentra el contrato, retornamos null
-        if (contratoObtenido == null) {
-            return null;
+            // Si no se encuentra el contrato, retornamos null
+            if (contratoObtenido == null) {
+                return null;
+            }
+
+            return contratoObtenido;
+        } catch (Exception ex) {
+            throw new PersistenciaException("No se pudo realizar la búsqueda del contrato.");
+        } finally {
+            conexionBD.getEM().clear();
         }
-
-        return contratoObtenido;
-    } catch (Exception ex) {
-        throw new PersistenciaException("No se pudo realizar la búsqueda del contrato.");
-    } finally {
-        conexionBD.getEM().clear();
     }
-}
-
 
     @Override
     public List<ContratoServicio> obtenerContratos(Cliente cliente) throws Exception {
@@ -140,10 +143,25 @@ public ContratoServicio obtenerContrato(Long contratoId) throws Exception {
         }
     }
 
+    @Override
+    public Boolean actualizarContrato(ContratoServicio contrato) throws Exception {
+        EntityManager em = conexionBD.getEM();
+        EntityTransaction transaction = em.getTransaction();
 
-
-   
-
-    
+        try {
+            transaction.begin();
+            em.merge(contrato);
+            transaction.commit();
+            return true;
+        } catch (Exception ex) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
+            System.out.println(ex.getMessage());
+            throw new PersistenciaException("No se pudo realizar el contrato.");
+        } finally {
+            em.clear();
+        }
+    }
 
 }
