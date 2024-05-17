@@ -101,35 +101,34 @@ public class frmRegistrarMensualidad extends javax.swing.JFrame {
 
             List<Cliente> contratos = clientedao.obtenerClientesContratoCargos();
             for (Cliente servicio : contratos) {
-                System.out.println(servicio.getContratosServicio().get(0).getId()+"idContrato");
+                System.out.println(servicio.getContratosServicio().get(0).getId() + "idContrato");
                 if (!servicio.getContratosServicio().get(0).getCargos().isEmpty()) {
-                    
-                
-                ContratoServicio c = servicio.getContratosServicio().get(0);
-                Date d = c.getCargos().get(0).getFecha();
-                Cargo cargo = c.getCargos().get(0);
-                long diferenciaMilisegundos = new Date().getTime() - d.getTime();
-                long diferenciaDias = diferenciaMilisegundos / (24 * 60 * 60 * 1000);
-                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                if (diferenciaDias < 0) {
-                    diferenciaDias = 0;
-                }
-                Object[] rowData = {
-                    servicio.getId(),
-                    servicio.getNombreCliente(),
-                    cargo.getDeuda(),
-                    formatter.format(d),
-                    diferenciaDias
-                };
-                if (cargo.getDeuda() == 0) {
-                    Object[] rowData2 = {
+
+                    ContratoServicio c = servicio.getContratosServicio().get(0);
+                    Date d = c.getCargos().get(0).getFecha();
+                    Cargo cargo = c.getCargos().get(0);
+                    long diferenciaMilisegundos = new Date().getTime() - d.getTime();
+                    long diferenciaDias = diferenciaMilisegundos / (24 * 60 * 60 * 1000);
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                    if (diferenciaDias < 0) {
+                        diferenciaDias = 0;
+                    }
+                    Object[] rowData = {
                         servicio.getId(),
                         servicio.getNombreCliente(),
-                        "Sin Cargos",};
-                    rowData = rowData2;
-                }
+                        cargo.getDeuda(),
+                        formatter.format(d),
+                        diferenciaDias
+                    };
+                    if (cargo.getDeuda() == 0) {
+                        Object[] rowData2 = {
+                            servicio.getId(),
+                            servicio.getNombreCliente(),
+                            "Sin Cargos",};
+                        rowData = rowData2;
+                    }
 
-                model.addRow(rowData);
+                    model.addRow(rowData);
                 }
             }
         } catch (SQLException ex) {
@@ -310,9 +309,19 @@ public class frmRegistrarMensualidad extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btnMensualidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMensualidadActionPerformed
+
         if (idSeleccionado != null && idSeleccionado != 0) {
             try {
-                ContratoServicio s = contratoDAO.obtenerContrato(idSeleccionado);
+                List<ContratoServicio> d= contratoDAO.obtenerContrato();
+                ContratoServicio s=null;
+                for (ContratoServicio contratoServicio : d) {
+                    if (contratoServicio.getCliente().getId()==idSeleccionado) {
+                        s=contratoServicio;
+                    }
+                }
+                if (s==null) {
+                    System.out.println("es null");
+                }
                 frmDetalleCliente f = new frmDetalleCliente(s);
                 this.dispose();
                 f.setVisible(true);

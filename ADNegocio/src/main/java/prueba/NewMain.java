@@ -26,8 +26,8 @@ public class NewMain {
     public static void main(String[] args) throws Exception {
         ConexionBD conexionBD = new ConexionBD("adconexiones");
         ClienteDAO cliente = new ClienteDAO(conexionBD);
-        Cliente c11 = new Cliente("Tilina31", "Urbi", "San Ancelmo", "575A", "6441769038");
-        cliente.agregarPersona(c11);
+     cliente.insercionMasivaPersonas();
+        
         PlanDAO plan = new PlanDAO(conexionBD);
         Plan planObjeto = new Plan(300F, "200m");
         plan.insertarPlan(planObjeto);

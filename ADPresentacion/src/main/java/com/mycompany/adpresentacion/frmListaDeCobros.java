@@ -161,7 +161,7 @@ public class frmListaDeCobros extends javax.swing.JFrame {
         //Aqui en vez de Registro Prueba seria Cargo
         listaPDFA = new ArrayList<>();
         listaPDFN = new ArrayList<>();
-        
+
         Collections.sort(clientesNormales, comparadorDeuda);
         for (Cliente clientes : clientesNormales) {
 
@@ -200,7 +200,9 @@ public class frmListaDeCobros extends javax.swing.JFrame {
 
             }
         }
+
         Collections.sort(clientesAtrasados, comparadorDeuda);
+        clientesAtrasados.clear();
         for (Cliente clientes : clientesAtrasados) {
 
             System.out.println(clientes.getNombreCliente());
@@ -220,15 +222,19 @@ public class frmListaDeCobros extends javax.swing.JFrame {
                         long diferenciaMilisegundos = new Date().getTime() - d.getTime();
                         long diferenciaDias = diferenciaMilisegundos / (24 * 60 * 60 * 1000);
                         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                        modelAtrasados.addRow(new Object[]{
-                            clientes.getId(),
-                            clientes.getNombreCliente(),
-                            clientes.getNumeroCliente() + " " + clientes.getColoniaCliente() + " " + clientes.getCalleCliente(),
-                            clientes.getTelefonoCliente(),
-                            formatter.format(d),
-                            diferenciaDias,
-                            costo
-                        });
+                        if (diferenciaDias > 0) {
+                            modelAtrasados.addRow(new Object[]{
+                                clientes.getId(),
+                                clientes.getNombreCliente(),
+                                clientes.getNumeroCliente() + " " + clientes.getColoniaCliente() + " " + clientes.getCalleCliente(),
+                                clientes.getTelefonoCliente(),
+                                formatter.format(d),
+                                diferenciaDias,
+                                costo
+                            });
+                        } else {
+
+                        }
 
                         JasperReporte reporte = new JasperReporte();
                         reporte.setId(String.valueOf(clientes.getId()));
