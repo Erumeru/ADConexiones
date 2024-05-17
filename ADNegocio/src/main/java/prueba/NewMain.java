@@ -22,13 +22,10 @@ public class NewMain {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-       ConexionBD conexionBD = new ConexionBD("adconexiones");
+        ConexionBD conexionBD = new ConexionBD("adconexiones");
         ClienteDAO cliente = new ClienteDAO(conexionBD);
-        try {
-            List<Cliente> clientes = cliente.obtenerClientesAtrasados();
-        } catch (SQLException ex) {
-            Logger.getLogger(NewMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        Cliente c11 = new Cliente("Tilina31", "Urbi", "San Ancelmo", "575A", "6441769038");
+        cliente.agregarPersona(c11);
     }
     
 }

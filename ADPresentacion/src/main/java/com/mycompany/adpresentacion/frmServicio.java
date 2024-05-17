@@ -4,18 +4,26 @@
  */
 package com.mycompany.adpresentacion;
 
+import com.itson.proyecto2_233410_233023.dominio.Cargo;
 import com.itson.proyecto2_233410_233023.dominio.Cliente;
+import com.itson.proyecto2_233410_233023.dominio.ContratoServicio;
+import static com.itson.proyecto2_233410_233023.dominio.ContratoServicio_.cliente;
 import com.itson.proyecto2_233410_233023.dominio.Plan;
 import com.itson.proyecto2_233410_233023.implementaciones.ConexionBD;
+import com.mycompany.adnegocio.CargoDAO;
 import com.mycompany.adnegocio.ClienteDAO;
 import com.mycompany.adnegocio.ContratoServicioDAO;
 import com.mycompany.adnegocio.PlanDAO;
+import interfaces.ICargoDAO;
 import interfaces.IClienteDAO;
 import interfaces.IContratoServicio;
 import interfaces.IPlanDAO;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -24,6 +32,7 @@ import java.util.logging.Logger;
 public class frmServicio extends javax.swing.JFrame {
     private IClienteDAO clientedao;
     private IContratoServicio contratoDAO;
+    private ICargoDAO cargoDAO;
     private IPlanDAO PlanDAO;
     private Long idCliente;
     /**
@@ -38,6 +47,7 @@ public class frmServicio extends javax.swing.JFrame {
         clientedao = new ClienteDAO(conexionBD);
          contratoDAO = new ContratoServicioDAO(conexionBD);
         PlanDAO = new PlanDAO(conexionBD);
+        cargoDAO = new CargoDAO(conexionBD);
         this.idCliente=cliente;
         rellenarCampos(cliente);
         
@@ -55,6 +65,30 @@ public class frmServicio extends javax.swing.JFrame {
         } catch (Exception ex) {
             Logger.getLogger(frmServicio.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    public boolean registararContrato(){
+        Cliente cliente = clientedao.obtenerPersona(idCliente);
+        LocalDate fechaInicio = LocalDate.now();
+        Plan p=  (Plan)cmbPlan.getSelectedItem();
+        ContratoServicio contrato = new ContratoServicio(p.getCostoMensualidad(), fechaInicio.getDayOfMonth(), p, cliente);
+        
+        try {   
+            contratoDAO.crearContrato(contrato);
+            
+        } catch (Exception ex) {
+            Logger.getLogger(frmServicio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {   
+            LocalDate fechaHoy = LocalDate.now();
+            ContratoServicio contratoCliente =contratoDAO.obtenerContrato(cliente);
+            Cargo cargo = new Cargo(contrato.getMontoPagar(), new Date(), contrato);
+            cargoDAO.generarCargo(cargo);
+        } catch (Exception ex) {
+            Logger.getLogger(frmServicio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        JOptionPane.showMessageDialog(rootPane, "Total de Pagar : "+contrato.getMontoPagar()+"\n Fecha a Pagar: "+new Date());
+        
+        return true;
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -241,7 +275,8 @@ public class frmServicio extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnPeriodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPeriodoActionPerformed
-
+        
+        registararContrato();        
     }//GEN-LAST:event_btnPeriodoActionPerformed
 
     private void btnPeriodo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPeriodo1ActionPerformed

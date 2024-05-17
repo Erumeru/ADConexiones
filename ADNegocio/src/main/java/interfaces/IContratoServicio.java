@@ -6,7 +6,7 @@ package interfaces;
 
 import com.itson.proyecto2_233410_233023.dominio.Cliente;
 import com.itson.proyecto2_233410_233023.dominio.ContratoServicio;
-import com.mycompany.adnegocio.ContratoServicioDAO;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -16,9 +16,8 @@ import java.util.List;
 public interface IContratoServicio {
 
     Boolean crearContrato(ContratoServicio contrato) throws Exception;
-
     public ContratoServicio obtenerContrato(Cliente cliente) throws Exception;
-    
+    public List<ContratoServicio> obtenerContrato() throws SQLException;
     public List<ContratoServicio> obtenerContratos(Cliente cliente)throws Exception;
-    
+    public ContratoServicio obtenerContrato(Long contratoId) throws Exception ;
 }

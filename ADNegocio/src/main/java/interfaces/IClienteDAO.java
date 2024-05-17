@@ -22,10 +22,10 @@ public interface IClienteDAO {
      * @return Valor booleano.
      */
     boolean insercionMasivaPersonas();
-    
+    public boolean agregarPersona(Cliente cliente);
     public Cliente obtenerPersona(Long id);
     public List<Cliente> obtenerClientes() throws SQLException;
-    
+    public List<Cliente> obtenerClientesContrato() throws SQLException;
     public List<Cliente> obtenerClientesAtrasados() throws SQLException;
 
     public List<Cliente> obtenerClientesSemana() throws SQLException;

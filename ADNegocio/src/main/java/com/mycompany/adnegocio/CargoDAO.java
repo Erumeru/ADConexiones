@@ -9,6 +9,9 @@ import com.itson.proyecto2_233410_233023.dominio.ContratoServicio;
 import com.itson.proyecto2_233410_233023.implementaciones.PersistenciaException;
 import com.itson.proyecto2_233410_233023.interfaces.IConexionBD;
 import interfaces.ICargoDAO;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 /**
@@ -71,6 +74,79 @@ public class CargoDAO implements ICargoDAO {
             throw new PersistenciaException("No se pudo realizar la búsqueda del cargo.");
         } finally {
             conexionBD.getEM().clear();
+        }
+    }
+
+    @Override
+    public List<Cargo> obtenerCargos(ContratoServicio contrato) throws Exception {
+        List<Cargo> cargos = new ArrayList<>();
+
+        try {
+            // Obtener el ID del contrato
+            Long contratoId = contrato.getId();
+
+            // Buscar los cargos asociados al contrato por su ID
+            cargos = conexionBD.getEM()
+                    .createQuery("SELECT c FROM Cargo c WHERE c.contratoServicio.id = :contratoId", Cargo.class)
+                    .setParameter("contratoId", contratoId)
+                    .getResultList();
+
+            return cargos;
+        } catch (NoResultException ex) {
+            return new ArrayList<>(); // No se encontró ningún cargo para ese contrato
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            throw new PersistenciaException("No se pudo realizar la búsqueda de los cargos.");
+        } finally {
+            conexionBD.getEM().clear();
+        }
+    }
+
+    @Override
+    public List<Cargo> obtenerCargosPorContratoId(Long contratoId) throws Exception {
+        List<Cargo> cargos = new ArrayList<>();
+
+        try {
+            // Buscar los cargos asociados al contrato por su ID
+            cargos = conexionBD.getEM()
+                    .createQuery("SELECT c FROM Cargo c WHERE c.contratoServicio.id = :contratoId", Cargo.class)
+                    .setParameter("contratoId", contratoId)
+                    .getResultList();
+
+            return cargos;
+        } catch (NoResultException ex) {
+            return new ArrayList<>(); // No se encontró ningún cargo para ese contrato
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            throw new PersistenciaException("No se pudo realizar la búsqueda de los cargos.");
+        } finally {
+            conexionBD.getEM().clear();
+        }
+    }
+
+    @Override
+    public Cargo modificarCargo(Cargo cargoModificado) throws Exception {
+        EntityManager em = conexionBD.getEM();
+
+        try {
+            // Iniciar una transacción
+            em.getTransaction().begin();
+
+            // Hacer el merge del cargo modificado
+            Cargo cargoActualizado = em.merge(cargoModificado);
+
+            // Finalizar la transacción
+            em.getTransaction().commit();
+
+            return cargoActualizado;
+        } catch (Exception ex) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            System.out.println(ex.getMessage());
+            throw new PersistenciaException("No se pudo realizar la modificación del cargo.");
+        } finally {
+            em.clear();
         }
     }
 

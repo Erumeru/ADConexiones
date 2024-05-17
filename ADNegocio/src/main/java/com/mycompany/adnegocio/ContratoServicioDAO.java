@@ -9,9 +9,12 @@ import com.itson.proyecto2_233410_233023.dominio.ContratoServicio;
 import com.itson.proyecto2_233410_233023.implementaciones.PersistenciaException;
 import com.itson.proyecto2_233410_233023.interfaces.IConexionBD;
 import interfaces.IContratoServicio;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
+import javax.persistence.Query;
 
 /**
  *
@@ -33,7 +36,24 @@ public class ContratoServicioDAO implements IContratoServicio {
     public ContratoServicioDAO(IConexionBD conexionBD) {
         this.conexionBD = conexionBD;
     }
+    @Override
+    public List<ContratoServicio> obtenerContrato() throws SQLException {
+        List<ContratoServicio> contratoServicio = new ArrayList<>();
 
+        try {
+            String consulta = "SELECT c FROM ContratoServicio c";
+            Query query = conexionBD.getEM().createQuery(consulta);
+            contratoServicio = query.getResultList();
+        } catch (NoResultException e) {
+            // No se encontraron resultados
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new PersistenceException("Error al obtener todos los clientes: " + e.getMessage());
+        }
+
+        return contratoServicio;
+    }
+    
     @Override
     public ContratoServicio obtenerContrato(Cliente cliente) throws Exception {
         try {
@@ -60,6 +80,26 @@ public class ContratoServicioDAO implements IContratoServicio {
             conexionBD.getEM().clear();
         }
     }
+    @Override
+public ContratoServicio obtenerContrato(Long contratoId) throws Exception {
+    try {
+        // Buscar el contrato por su ID
+        ContratoServicio contratoObtenido = conexionBD.getEM()
+                .find(ContratoServicio.class, contratoId);
+
+        // Si no se encuentra el contrato, retornamos null
+        if (contratoObtenido == null) {
+            return null;
+        }
+
+        return contratoObtenido;
+    } catch (Exception ex) {
+        throw new PersistenciaException("No se pudo realizar la búsqueda del contrato.");
+    } finally {
+        conexionBD.getEM().clear();
+    }
+}
+
 
     @Override
     public List<ContratoServicio> obtenerContratos(Cliente cliente) throws Exception {
@@ -99,5 +139,11 @@ public class ContratoServicioDAO implements IContratoServicio {
             conexionBD.getEM().clear();
         }
     }
+
+
+
+   
+
+    
 
 }

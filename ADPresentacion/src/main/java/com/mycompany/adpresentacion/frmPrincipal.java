@@ -49,6 +49,11 @@ public class frmPrincipal extends javax.swing.JFrame {
         btnRegistrarMensualidades.setBorderPainted(false);
         btnRegistrarMensualidades.setContentAreaFilled(false);
         btnRegistrarMensualidades.setFocusable(false);
+        btnRegistrarMensualidades.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistrarMensualidadesActionPerformed(evt);
+            }
+        });
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/BotonListaCobros.png"))); // NOI18N
         jButton1.setBorderPainted(false);
@@ -189,6 +194,13 @@ public class frmPrincipal extends javax.swing.JFrame {
         frmAdministrarServicios f = new frmAdministrarServicios();
         f.setVisible(true);
     }//GEN-LAST:event_btnServiciosActionPerformed
+
+    private void btnRegistrarMensualidadesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarMensualidadesActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+        frmRegistrarMensualidad f = new frmRegistrarMensualidad();
+        f.setVisible(true);
+    }//GEN-LAST:event_btnRegistrarMensualidadesActionPerformed
 
     /**
      * @param args the command line arguments

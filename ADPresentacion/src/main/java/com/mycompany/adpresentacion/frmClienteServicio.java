@@ -112,10 +112,10 @@ public class frmClienteServicio extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         jLabel5.setText("Administrar Servicios");
 
-        btnPeriodo.setText("Registrar Servicio");
         btnPeriodo.setBackground(new java.awt.Color(235, 168, 23));
-        btnPeriodo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
         btnPeriodo.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        btnPeriodo.setText("Registrar Servicio");
+        btnPeriodo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
         btnPeriodo.setMaximumSize(new java.awt.Dimension(70, 26));
         btnPeriodo.setMinimumSize(new java.awt.Dimension(70, 26));
         btnPeriodo.setPreferredSize(new java.awt.Dimension(70, 26));
@@ -125,10 +125,10 @@ public class frmClienteServicio extends javax.swing.JFrame {
             }
         });
 
-        btnPeriodo1.setBackground(new java.awt.Color(235, 168, 23));
-        btnPeriodo1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnPeriodo1.setText("Regresar");
+        btnPeriodo1.setBackground(new java.awt.Color(235, 168, 23));
         btnPeriodo1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
+        btnPeriodo1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnPeriodo1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPeriodo1ActionPerformed(evt);
@@ -232,9 +232,8 @@ public class frmClienteServicio extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addGap(28, 28, 28)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 348, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, Short.MAX_VALUE)
+                .addGap(18, 21, Short.MAX_VALUE)
                 .addComponent(btnPeriodo3, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -243,7 +242,7 @@ public class frmClienteServicio extends javax.swing.JFrame {
                     .addComponent(btnPeriodo1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(btnPeriodo4, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(54, Short.MAX_VALUE))
+                .addContainerGap(57, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

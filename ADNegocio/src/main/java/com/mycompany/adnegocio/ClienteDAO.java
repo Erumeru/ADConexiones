@@ -40,6 +40,21 @@ public class ClienteDAO implements IClienteDAO {
     }
 
     @Override
+    public boolean agregarPersona(Cliente cliente) {
+        try {
+
+            conexionBD.getEM().getTransaction().begin();
+
+            conexionBD.getEM().persist(cliente);
+
+            conexionBD.getEM().getTransaction().commit();
+            return true;
+        } finally {
+            conexionBD.getEM().clear();
+        }
+    }
+
+    @Override
     public boolean insercionMasivaPersonas() {
         try {
             //String nombreCliente, String coloniaCliente, String calleCliente, String numeroCliente, String telefonoCliente
@@ -66,7 +81,7 @@ public class ClienteDAO implements IClienteDAO {
             conexionBD.getEM().clear();
         }
     }
-    
+
     @Override
     public Cliente obtenerPersona(Long id) {
         try {
@@ -82,23 +97,43 @@ public class ClienteDAO implements IClienteDAO {
             conexionBD.getEM().clear();
         }
     }
-    @Override
-public List<Cliente> obtenerClientes() throws SQLException {
-    List<Cliente> clientes = new ArrayList<>();
 
-    try {
-        String consulta = "SELECT c FROM Cliente c";
-        Query query = conexionBD.getEM().createQuery(consulta);
-        clientes = query.getResultList();
-    } catch (NoResultException e) {
-        // No se encontraron resultados
-    } catch (Exception e) {
-        e.printStackTrace();
-        throw new PersistenceException("Error al obtener todos los clientes: " + e.getMessage());
+    @Override
+    public List<Cliente> obtenerClientesContrato() throws SQLException {
+        List<Cliente> clientes = new ArrayList<>();
+
+        try {
+            String consulta = "SELECT DISTINCT cliente FROM ContratoServicio contrato JOIN contrato.cliente cliente";
+            Query query = conexionBD.getEM().createQuery(consulta);
+            clientes = query.getResultList();
+        } catch (NoResultException e) {
+            // No se encontraron resultados
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new PersistenceException("Error al obtener todos los clientes con contratos: " + e.getMessage());
+        }
+
+        return clientes;
     }
 
-    return clientes;
-}
+    @Override
+    public List<Cliente> obtenerClientes() throws SQLException {
+        List<Cliente> clientes = new ArrayList<>();
+
+        try {
+            String consulta = "SELECT c FROM Cliente c";
+            Query query = conexionBD.getEM().createQuery(consulta);
+            clientes = query.getResultList();
+        } catch (NoResultException e) {
+            // No se encontraron resultados
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new PersistenceException("Error al obtener todos los clientes: " + e.getMessage());
+        }
+
+        return clientes;
+    }
+
     @Override
     public List<Cliente> obtenerClientesAtrasados() throws SQLException {
         List<Cliente> clientes = new ArrayList<>();
@@ -150,9 +185,9 @@ public List<Cliente> obtenerClientes() throws SQLException {
 
         return clientes;
     }
-    
+
     @Override
-     public List<Cliente> obtenerClientesPorPeriodo(LocalDate fechaInicio, LocalDate fechaFin) throws SQLException {
+    public List<Cliente> obtenerClientesPorPeriodo(LocalDate fechaInicio, LocalDate fechaFin) throws SQLException {
         List<Cliente> clientes = new ArrayList<>();
 
         try {
@@ -162,13 +197,13 @@ public List<Cliente> obtenerClientes() throws SQLException {
                     + "JOIN Cliente cliente ON contrato.cliente.id = cliente.id "
                     + "WHERE c.deuda > 0 "
                     + "AND c.fecha BETWEEN :fechaInicio AND :fechaFin";
-            
+
             Query query = conexionBD.getEM().createQuery(consulta);
-           
+
             query.setParameter("fechaInicio", java.sql.Date.valueOf(fechaInicio));
             query.setParameter("fechaFin", java.sql.Date.valueOf(fechaFin));
             System.out.println(consulta);
-             System.out.println(java.sql.Date.valueOf(fechaInicio)+"AND "+java.sql.Date.valueOf(fechaFin));
+            System.out.println(java.sql.Date.valueOf(fechaInicio) + "AND " + java.sql.Date.valueOf(fechaFin));
             clientes = query.getResultList();
         } catch (Exception e) {
             e.printStackTrace();
